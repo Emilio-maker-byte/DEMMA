@@ -1,0 +1,38 @@
+/* Basic starter styles. We will learn more about CSS next class. */
+
+body {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+
+header {
+  border-bottom: 1px solid #999;
+  padding-bottom: 12px;
+}
+
+nav a {
+  margin-right: 16px;
+}
+
+main {
+  margin-top: 24px;
+}
+
+section {
+  margin-bottom: 32px;
+}
+
+article {
+  border: 1px solid #bbb;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+footer {
+  border-top: 1px solid #999;
+  padding-top: 12px;
+  color: #555;
+}

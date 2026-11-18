@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose your role</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #262626;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .screen {
+      width: 100%;
+      max-width: 400px;
+      background-color: #ffffff;
+      border-left: 1px solid #262626;
+      border-right: 1px solid #262626;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .header {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 2px solid #262626;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 36px 32px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    h1 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      letter-spacing: -0.2px;
+    }
+
+    .options-group {
+      border-left: 1px solid #262626;
+      border-right: 1px solid #262626;
+      margin-bottom: 24px;
+    }
+
+    .role-card {
+      display: flex;
+      flex-direction: column;
+      padding: 20px 20px 24px;
+      border-top: 2px solid #262626;
+      border-bottom: 2px solid #262626;
+      background-color: #ffffff;
+      cursor: default;
+    }
+
+    .role-card + .role-card {
+      margin-top: 14px;
+    }
+
+    .role-text {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .role-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .role-description {
+      font-size: 14px;
+      line-height: 1.4;
+      color: #333333;
+    }
+
+    .continue-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #262626;
+      color: #ffffff;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .continue-btn:hover {
+      background-color: #3b3b3b;
+    }
+
+    .continue-btn:active {
+      background-color: #141414;
+    }
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <header class="header">Choose your role</header>
+
+    <div class="content">
+      <div>
+        <h1>Are you a Student or Alumni?</h1>
+
+        <div class="options-group">
+          <!-- Student Card (Non-interactive) -->
+          <div class="role-card">
+            <div class="role-text">
+              <span class="role-title">Student</span>
+              <span class="role-description">
+                Find alumni mentors and explore your career options.
+              </span>
+            </div>
+          </div>
+
+          <!-- Alumni Card (Non-interactive) -->
+          <div class="role-card">
+            <div class="role-text">
+              <span class="role-title">Alumni</span>
+              <span class="role-description">
+                Share your experience and mentor current students.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Links to your dashboard file -->
+      <a href="home.html" class="continue-btn">Continue</a>
+    </div>
+  </main>
+</body>
+</html>

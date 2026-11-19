@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demma Mentorship</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #2b2b2b;
+    }
+
+    .app-container {
+      width: 100%;
+      height: 100vh;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Black Header Bar (same as home) */
+    .top-bar {
+      padding: 16px 40px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: "Sora", sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    /* Two half-screen containers (same as home) */
+    /* Title on top, cards spread out in a row below */
+    .content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top: centered title */
+    .left-side {
+      display: flex;
+      justify-content: center;
+      padding: 32px 40px 24px;
+    }
+
+    /* Bottom: gray band holding the cards (scrolls if the screen is short) */
+    .right-side {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 28px 40px 100px; /* bottom room for the nav */
+      background-color: #f4f4f4;
+    }
+
+    .intro {
+      max-width: 760px;
+      text-align: center;
+    }
+
+    .intro-avatar {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: "Sora", sans-serif;
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #555555;
+    }
+
+    /* Cards side by side; wraps to fewer columns on smaller screens */
+    .cards-column {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .cards-column {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .link-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Link cards (same look as home action cards) */
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 100px;
+      padding: 22px 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .link-card:hover {
+      background-color: #fafafa;
+    }
+
+    .link-card .card-text {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .chevron {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Panel cards (posts + questions) */
+    .panel {
+      padding: 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .panel-title .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Form fields */
+    .field {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #2b2b2b;
+      background-color: #ffffff;
+    }
+
+    textarea.field {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .field:focus {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    /* Image attachment */
+    .file-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .file-field {
+      display: block;
+      width: 100%;
+      margin-bottom: 14px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #555555;
+    }
+
+    /* Style the browser's "Choose File" button as an outlined pill */
+    .file-field::file-selector-button {
+      margin-right: 10px;
+      padding: 8px 16px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      background-color: #ffffff;
+      color: #2b2b2b;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .file-field::file-selector-button:hover {
+      background-color: #f1f1f1;
+    }
+
+    .file-field:focus-visible {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    /* Small pill button */
+    .pill-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      background-color: #3b3b3b;
+    }
+
+    /* Quick questions: each one opens to an answer box (no JavaScript) */
+    .question {
+      border-top: 1.5px solid #e0e0e0;
+    }
+
+    .question summary {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .question summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .question-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .asker {
+      font-size: 12px;
+      font-weight: 700;
+      color: #555555;
+    }
+
+    .question-body {
+      font-size: 14px;
+    }
+
+    .question .chevron {
+      margin-top: 4px;
+      transition: transform 0.15s ease;
+    }
+
+    .question[open] .chevron {
+      transform: rotate(90deg);
+    }
+
+    .question form {
+      padding-bottom: 14px;
+    }
+
+    /* Bottom Navigation (same floating pill as home) */
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: calc(100% - 40px);
+      max-width: 480px;
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 10;
+      border: 2px solid #2b2b2b;
+      border-radius: 999px;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 0 18px;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .nav-item + .nav-item {
+      border-left: 1.5px solid #2b2b2b;
+    }
+
+    .nav-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* On phones: one column of cards, page scrolls normally */
+    @media (max-width: 700px) {
+      .app-container {
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .right-side {
+        overflow-y: visible;
+      }
+
+      .top-bar,
+      .left-side,
+      .right-side {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .cards-column {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Black Header Bar -->
+    <header class="top-bar">Demma</header>
+
+    <main class="content">
+      <!-- Left container: announcement -->
+      <div class="left-side">
+        <div class="intro">
+          <svg class="intro-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.5"></circle>
+            <circle cx="12" cy="9.5" r="2.8"></circle>
+            <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
+          </svg>
+          <h1>You've officially started a mentorship with Emma K.!</h1>
+          <p class="subtitle">Here's everything you need to get going together.</p>
+        </div>
+      </div>
+
+      <!-- Right container: cards -->
+      <div class="right-side">
+        <div class="cards-column">
+          <!-- Discord + Connect stacked in one column -->
+          <div class="link-stack">
+            <!-- 1. Message on Discord -->
+            <a href="#" class="link-card">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path>
+              </svg>
+              <span class="card-text">Message Emma on your mentorship Discord server</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </a>
+
+            <!-- 2. Connect -->
+            <a href="#" class="link-card">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.5"></circle>
+                <path d="M3 19.5c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path>
+                <line x1="19" y1="8" x2="19" y2="14"></line>
+                <line x1="16" y1="11" x2="22" y2="11"></line>
+              </svg>
+              <span class="card-text">Connect with Emma</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </a>
+          </div>
+
+          <!-- 3. Post an opportunity to mentees (plain form, no JavaScript) -->
+          <form class="panel" action="#" method="get">
+            <h2 class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+                <line x1="8" y1="8" x2="16" y2="8"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+                <line x1="8" y1="16" x2="13" y2="16"></line>
+              </svg>
+              Post an Opportunity for Your Mentees
+            </h2>
+            <input class="field" type="text" name="title" placeholder="Title (e.g. Summer Internship at...)" aria-label="Opportunity title" />
+            <textarea class="field" name="details" placeholder="Details or a link..." aria-label="Opportunity details"></textarea>
+            <!-- Attach an image (built-in file picker, no JavaScript) -->
+            <label class="file-label" for="post-image">Attach an image (optional)</label>
+            <input class="file-field" id="post-image" type="file" name="image" accept="image/*" />
+            <button type="submit" class="pill-btn">Post to Mentees</button>
+          </form>
+
+          <!-- 4. Quick questions from mentees (edit or add <details> blocks) -->
+          <div class="panel">
+            <h2 class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9.5"></circle>
+                <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"></path>
+                <line x1="12" y1="17" x2="12" y2="17.01"></line>
+              </svg>
+              Quick Questions from Mentees
+            </h2>
+
+            <details class="question">
+              <summary>
+                <span class="question-text">
+                  <span class="asker">Lorelai G.</span>
+                  <span class="question-body">How did you prepare for your first technical interview?</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </summary>
+              <form action="#" method="get">
+                <textarea class="field" name="answer" placeholder="Type a quick answer..." aria-label="Answer Lorelai G."></textarea>
+                <button type="submit" class="pill-btn">Send Answer</button>
+              </form>
+            </details>
+
+            <details class="question">
+              <summary>
+                <span class="question-text">
+                  <span class="asker">Ryan G.</span>
+                  <span class="question-body">Is it worth doing an internship sophomore year?</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </summary>
+              <form action="#" method="get">
+                <textarea class="field" name="answer" placeholder="Type a quick answer..." aria-label="Answer Ryan G."></textarea>
+                <button type="submit" class="pill-btn">Send Answer</button>
+              </form>
+            </details>
+
+            <details class="question">
+              <summary>
+                <span class="question-text">
+                  <span class="asker">Sam C.</span>
+                  <span class="question-body">What's one class you'd recommend taking before graduating?</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </summary>
+              <form action="#" method="get">
+                <textarea class="field" name="answer" placeholder="Type a quick answer..." aria-label="Answer Sam C."></textarea>
+                <button type="submit" class="pill-btn">Send Answer</button>
+              </form>
+            </details>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Tab Navigation -->
+    <nav class="bottom-nav" aria-label="Primary Navigation">
+      <!-- Home -->
+      <a href="home.html" class="nav-item" aria-label="Home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5"></path>
+          <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"></path>
+          <path d="M10 20v-6h4v6"></path>
+        </svg>
+      </a>
+
+      <!-- Coffee Chat -->
+      <a href="#" class="nav-item" aria-label="Coffee Chats">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 10h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-6z"></path>
+          <path d="M16 11h2a2.5 2.5 0 0 1 0 5h-2"></path>
+          <line x1="7" y1="4" x2="7" y2="6.5"></line>
+          <line x1="10" y1="4" x2="10" y2="6.5"></line>
+          <line x1="13" y1="4" x2="13" y2="6.5"></line>
+        </svg>
+      </a>
+
+      <!-- Mentors / Community -->
+      <a href="#" class="nav-item" aria-label="Community">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9.5" cy="8.5" r="3.5"></circle>
+          <path d="M3.5 19.5c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path>
+          <path d="M15.5 5.5a3.5 3.5 0 0 1 0 6.5"></path>
+          <path d="M17.5 14.5c2 .6 3.5 2.3 3.5 5"></path>
+        </svg>
+      </a>
+
+      <!-- Profile -->
+      <a href="#" class="nav-item" aria-label="Profile">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9.5"></circle>
+          <circle cx="12" cy="9.5" r="2.8"></circle>
+          <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
+        </svg>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

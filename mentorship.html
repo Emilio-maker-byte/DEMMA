@@ -298,6 +298,43 @@
       padding-bottom: 14px;
     }
 
+    /* Simulated responses (the #id in the address picks which one) */
+    .confirm-msg {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background-color: #f1f1f1;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    #posted:target .posted-msg {
+      display: block;
+    }
+
+    /* Answered question: badge in the row, form swapped for a message */
+    .answered-badge {
+      display: none;
+      align-self: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .question:target .answered-badge,
+    .question:target .confirm-msg {
+      display: inline-block;
+    }
+
+    .question:target form {
+      display: none;
+    }
+
     /* Bottom Navigation (same floating pill as home) */
     .bottom-nav {
       display: grid;
@@ -331,6 +368,12 @@
 
     .nav-item:hover {
       background-color: #f5f5f5;
+    }
+
+    /* Current page in the nav */
+    .nav-item[aria-current="page"] {
+      background-color: #2b2b2b;
+      color: #ffffff;
     }
 
     /* On phones: one column of cards, page scrolls normally */
@@ -408,7 +451,7 @@
           </div>
 
           <!-- 3. Post an opportunity to mentees (plain form, no JavaScript) -->
-          <form class="panel" action="#" method="get">
+          <form class="panel" id="posted" action="#posted" method="get">
             <h2 class="panel-title">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="4" y="3" width="16" height="18" rx="2"></rect>
@@ -423,6 +466,8 @@
             <!-- Attach an image (built-in file picker, no JavaScript) -->
             <label class="file-label" for="post-image">Attach an image (optional)</label>
             <input class="file-field" id="post-image" type="file" name="image" accept="image/*" />
+            <!-- Simulated: shows after pressing Post to Mentees -->
+            <p class="confirm-msg posted-msg">&#10003; Posted! Your opportunity was sent to your mentees.</p>
             <button type="submit" class="pill-btn">Post to Mentees</button>
           </form>
 
@@ -437,52 +482,58 @@
               Quick Questions from Mentees
             </h2>
 
-            <details class="question">
+            <details class="question" id="q-1">
               <summary>
                 <span class="question-text">
                   <span class="asker">Lorelai G.</span>
                   <span class="question-body">How did you prepare for your first technical interview?</span>
                 </span>
+                <span class="answered-badge">&#10003; Answered</span>
                 <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </summary>
-              <form action="#" method="get">
+              <form action="#q-1" method="get">
                 <textarea class="field" name="answer" placeholder="Type a quick answer..." aria-label="Answer Lorelai G."></textarea>
                 <button type="submit" class="pill-btn">Send Answer</button>
               </form>
+              <p class="confirm-msg">&#10003; Answer sent!</p>
             </details>
 
-            <details class="question">
+            <details class="question" id="q-2">
               <summary>
                 <span class="question-text">
                   <span class="asker">Ryan G.</span>
                   <span class="question-body">Is it worth doing an internship sophomore year?</span>
                 </span>
+                <span class="answered-badge">&#10003; Answered</span>
                 <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </summary>
-              <form action="#" method="get">
+              <form action="#q-2" method="get">
                 <textarea class="field" name="answer" placeholder="Type a quick answer..." aria-label="Answer Ryan G."></textarea>
                 <button type="submit" class="pill-btn">Send Answer</button>
               </form>
+              <p class="confirm-msg">&#10003; Answer sent!</p>
             </details>
 
-            <details class="question">
+            <details class="question" id="q-3">
               <summary>
                 <span class="question-text">
                   <span class="asker">Sam C.</span>
                   <span class="question-body">What's one class you'd recommend taking before graduating?</span>
                 </span>
+                <span class="answered-badge">&#10003; Answered</span>
                 <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </summary>
-              <form action="#" method="get">
+              <form action="#q-3" method="get">
                 <textarea class="field" name="answer" placeholder="Type a quick answer..." aria-label="Answer Sam C."></textarea>
                 <button type="submit" class="pill-btn">Send Answer</button>
               </form>
+              <p class="confirm-msg">&#10003; Answer sent!</p>
             </details>
           </div>
         </div>
@@ -492,7 +543,7 @@
     <!-- Bottom Tab Navigation -->
     <nav class="bottom-nav" aria-label="Primary Navigation">
       <!-- Home -->
-      <a href="home.html" class="nav-item" aria-label="Home">
+      <a href="home_alumni.html" class="nav-item" aria-label="Home">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 10.5L12 3l9 7.5"></path>
           <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"></path>
@@ -502,22 +553,24 @@
 
       <!-- Coffee Chat -->
       <a href="#" class="nav-item" aria-label="Coffee Chats">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 10h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-6z"></path>
-          <path d="M16 11h2a2.5 2.5 0 0 1 0 5h-2"></path>
-          <line x1="7" y1="4" x2="7" y2="6.5"></line>
-          <line x1="10" y1="4" x2="10" y2="6.5"></line>
-          <line x1="13" y1="4" x2="13" y2="6.5"></line>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <!-- speech bubble -->
+          <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
+          <!-- coffee cup inside -->
+          <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
+          <path d="M14.5 11h.8a1.4 1.4 0 0 1 0 2.8h-.8"></path>
+          <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
+          <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
         </svg>
       </a>
 
-      <!-- Mentors / Community -->
-      <a href="#" class="nav-item" aria-label="Community">
+      <!-- Posts -->
+      <a href="post.html" class="nav-item" aria-label="Posts">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9.5" cy="8.5" r="3.5"></circle>
-          <path d="M3.5 19.5c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path>
-          <path d="M15.5 5.5a3.5 3.5 0 0 1 0 6.5"></path>
-          <path d="M17.5 14.5c2 .6 3.5 2.3 3.5 5"></path>
+          <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+          <line x1="8" y1="8" x2="16" y2="8"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+          <line x1="8" y1="16" x2="13" y2="16"></line>
         </svg>
       </a>
 

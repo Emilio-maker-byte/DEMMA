@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alumni post</title>
+  <title>Demma Alumni Post</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -12,395 +13,863 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f4f4;
-      color: #222222;
-      min-height: 100vh;
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #2b2b2b;
     }
 
-    .desktop-layout {
-      display: flex;
-      min-height: 100vh;
+    .app-container {
       width: 100%;
-    }
-
-    /* Left Sidebar Navigation for Desktop */
-    .sidebar-nav {
-      width: 240px;
+      height: 100vh;
       background-color: #ffffff;
-      border-right: 1.5px solid #222222;
       display: flex;
       flex-direction: column;
-      padding: 24px 0;
-      flex-shrink: 0;
     }
 
-    .brand-title {
-      font-size: 20px;
-      font-weight: 700;
-      padding: 0 24px 24px;
-      border-bottom: 1.5px solid #222222;
-      margin-bottom: 16px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 24px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #222222;
-      font-size: 16px;
-      font-weight: 500;
-      text-align: left;
-      width: 100%;
-    }
-
-    .nav-item:hover {
-      background-color: #f0f0f0;
-    }
-
-    /* Main Workspace */
-    .main-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background-color: #ffffff;
-    }
-
-    /* Top App Bar */
+    /* Black Header Bar (same as home) */
     .top-bar {
+      padding: 16px 40px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: "Sora", sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    /* Two half-screen containers (same as home) */
+    .content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+    }
+
+    .left-side,
+    .right-side {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      justify-content: center;
+      padding: 28px 40px 100px; /* bottom room for the nav */
+    }
+
+    .right-side {
+      background-color: #f4f4f4;
+    }
+
+    /* ---------- Left: list of the mentor's posts ---------- */
+    .list-area {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    /* Back link + section title */
+    .page-title {
       display: flex;
       align-items: center;
-      padding: 18px 32px;
-      border-bottom: 1.5px solid #222222;
-      gap: 14px;
-      background-color: #ffffff;
+      gap: 10px;
+      margin-bottom: 32px;
     }
 
     .back-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
-      padding: 2px;
-      color: #222222;
+      justify-content: center;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 50%;
+      color: #2b2b2b;
+      transition: background-color 0.15s ease;
     }
 
-    .top-bar h1 {
-      font-size: 20px;
-      font-weight: 600;
-      color: #222222;
+    .back-btn:hover {
+      background-color: #f1f1f1;
     }
 
-    /* Centered Full-Width Desktop Container */
-    .content-wrapper {
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    h1 {
+      font-family: "Sora", sans-serif;
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 800;
+    }
+
+    /* Scrolling list of post cards */
+    .post-list {
       flex: 1;
-      width: 100%;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 32px 40px;
+      min-height: 0;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
+      gap: 12px;
+      padding: 4px 8px 4px 4px;
     }
 
-    /* Author Header */
+    .post-link {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .post-link:hover {
+      background-color: #fafafa;
+    }
+
+    .post-link-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .post-link-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .post-link-snippet {
+      font-size: 13px;
+      color: #555555;
+      line-height: 1.35;
+    }
+
+    .post-link-date {
+      font-size: 12px;
+      font-weight: 700;
+      color: #8a8a8a;
+    }
+
+    .chevron {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Selection indicator: thicker border + gray fill on the selected card */
+    .content:has(#post-1:target, #post-1 :target) .post-link[href="#post-1"],
+    .content:has(#post-2:target, #post-2 :target) .post-link[href="#post-2"],
+    .content:has(#post-3:target, #post-3 :target) .post-link[href="#post-3"],
+    .content:has(#post-4:target, #post-4 :target) .post-link[href="#post-4"],
+    .content:not(:has(:target)) .post-link[href="#post-1"]
+    {
+      background-color: #f1f1f1;
+      box-shadow: 0 0 0 2px #2b2b2b;
+    }
+
+    /* Scroll cues (same as mentee list) */
+    .post-list::-webkit-scrollbar,
+    .comment-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .post-list::-webkit-scrollbar-track,
+    .comment-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .post-list::-webkit-scrollbar-thumb,
+    .comment-list::-webkit-scrollbar-thumb {
+      background-color: #b5b5b5;
+      border-radius: 999px;
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+      .post-list,
+      .comment-list {
+        scrollbar-width: thin;
+        scrollbar-color: #b5b5b5 transparent;
+      }
+    }
+
+    .post-list::after {
+      content: "";
+      position: sticky;
+      bottom: -4px;
+      flex-shrink: 0;
+      height: 40px;
+      margin-top: -12px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff);
+      pointer-events: none;
+    }
+
+    /* ---------- Right: selected post + comments ---------- */
+    /* Only the selected post shows (the #post-N in the link picks it) */
+    .post-detail {
+      display: none;
+      width: 100%;
+      max-width: 520px;
+      max-height: 85%; /* comments panel stops a bit short of the bottom */
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .post-detail:target,
+    .post-detail:has(:target),
+    .right-side:not(:has(:target)) .post-detail:first-child {
+      display: flex;
+    }
+
+    /* Post card */
+    .post-card {
+      flex-shrink: 0;
+      padding: 20px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+    }
+
     .author-row {
       display: flex;
       align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
-    .avatar-icon {
+    .avatar {
       width: 44px;
       height: 44px;
       flex-shrink: 0;
-      color: #222222;
     }
 
-    .skeleton-group {
+    .author-info {
       display: flex;
       flex-direction: column;
-      gap: 9px;
-      flex: 1;
+      gap: 2px;
     }
 
-    .skeleton-bar {
-      height: 7px;
-      background-color: #cccccc;
-      border-radius: 999px;
-      width: 45%;
+    .author-name {
+      font-size: 16px;
+      font-weight: 700;
     }
 
-    /* Post Box */
-    .post-box {
-      border: 1.5px solid #222222;
-      padding: 20px 22px 56px;
+    .author-role {
+      font-size: 13px;
+      color: #555555;
+    }
+
+    .post-title {
       font-size: 18px;
-      font-weight: 600;
-      line-height: 1.4;
-      color: #111111;
-      margin-bottom: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
-    /* Action Row (Like & Bookmark) */
+    .post-body {
+      font-size: 16px;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    /* Like + Bookmark (checkboxes, no JavaScript) */
     .action-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 20px;
-      border-bottom: 1.5px solid #222222;
-      margin-bottom: 20px;
+      padding-top: 12px;
+      border-top: 1.5px solid #e0e0e0;
     }
 
     .like-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .icon-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
+      position: relative;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
-      color: #222222;
-      padding: 0;
+      justify-content: center;
+      border-radius: 50%;
+      color: #2b2b2b;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
     }
 
-    .like-skeleton {
-      width: 32px;
-      height: 7px;
-      background-color: #cccccc;
-      border-radius: 999px;
+    .icon-btn:hover {
+      background-color: #f1f1f1;
     }
 
-    /* Comments Section */
+    .icon-btn svg {
+      width: 22px;
+      height: 22px;
+      transition: fill 0.15s ease;
+    }
+
+    .icon-btn input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .icon-btn:has(input:checked) svg {
+      fill: #2b2b2b;
+    }
+
+    .icon-btn:has(input:focus-visible),
+    .post-link:focus-visible {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    /* Comments */
+    .comments-panel {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+    }
+
     .comments-heading {
-      font-size: 18px;
-      font-weight: 600;
-      color: #222222;
-      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .comments-heading svg {
+      width: 20px;
+      height: 20px;
     }
 
     .comment-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      flex: 1;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .comment-item {
       display: flex;
-      align-items: center;
-      gap: 16px;
+      align-items: flex-start;
+      gap: 12px;
+      flex-shrink: 0;
     }
 
     .comment-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 1.5px solid #222222;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .comment-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .comment-name {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .no-comments {
+      font-size: 14px;
+      color: #8a8a8a;
+    }
+
+    /* Simulated "after posting": your comment shows up */
+    .new-comment {
+      display: none;
+    }
+
+    .new-comment:target {
+      display: flex;
+    }
+
+    .post-detail:has(.new-comment:target) .no-comments {
+      display: none;
+    }
+
+    .just-now {
+      font-weight: 400;
+      color: #8a8a8a;
+    }
+
+    /* Comment box + Post button (plain form, no JavaScript) */
+    .composer {
+      display: flex;
+      gap: 10px;
+    }
+
+    .composer input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #2b2b2b;
+    }
+
+    .composer input:focus {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    .pill-btn {
+      padding: 0 22px;
+      border: none;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      background-color: #3b3b3b;
+    }
+
+    /* Bottom Navigation (same floating pill as home) */
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: calc(100% - 40px);
+      max-width: 480px;
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 10;
+      border: 2px solid #2b2b2b;
+      border-radius: 999px;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .nav-item {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: #222222;
-      flex-shrink: 0;
+      padding: 14px 0 18px;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
     }
 
-    /* Comment Input Box */
-    .comment-input-wrapper {
-      margin-top: auto;
-      padding-top: 32px;
+    .nav-item + .nav-item {
+      border-left: 1.5px solid #2b2b2b;
     }
 
-    .comment-input-box {
-      display: flex;
-      align-items: center;
-      background-color: #e4e4e4;
-      border: 1.5px solid #222222;
-      padding: 16px 20px;
+    .nav-item:hover {
+      background-color: #f5f5f5;
     }
 
-    .comment-input-box input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 16px;
-      color: #222222;
-      outline: none;
-      width: 100%;
+    /* Current page in the nav */
+    .nav-item[aria-current="page"] {
+      background-color: #2b2b2b;
+      color: #ffffff;
     }
 
-    .comment-input-box input::placeholder {
-      color: #666666;
-    }
+    /* On phones: selected post on top, list below, page scrolls normally */
+    @media (max-width: 700px) {
+      .app-container {
+        height: auto;
+        min-height: 100vh;
+      }
 
-    .post-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      color: #222222;
-      padding-left: 16px;
-      flex-shrink: 0;
-    }
+      .content {
+        flex-direction: column-reverse;
+      }
 
-    .post-btn:hover {
-      opacity: 0.7;
+      .left-side,
+      .right-side {
+        flex: none;
+      }
+
+      .top-bar,
+      .left-side,
+      .right-side {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .right-side {
+        padding-bottom: 24px;
+      }
+
+      .post-list {
+        max-height: 50vh;
+      }
+
+      .post-detail {
+        max-height: none;
+      }
+
+      .comment-list {
+        max-height: 240px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="desktop-layout">
-    <!-- Left Sidebar Navigation -->
-    <aside class="sidebar-nav">
-      <div class="brand-title">Demma</div>
+  <div class="app-container">
+    <!-- Black Header Bar -->
+    <header class="top-bar">Demma</header>
 
-      <a href="home.html" class="nav-item" aria-label="Home" style="text-decoration: none;">
+    <main class="content">
+      <!-- Left container: all posts from this mentor (scrolls) -->
+      <div class="left-side">
+        <div class="list-area">
+          <div class="page-title">
+            <a href="home_alumni.html" class="back-btn" aria-label="Back to Home">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </a>
+            <h1>Posts from Ricky</h1>
+          </div>
+
+          <nav class="post-list" aria-label="Posts from Ricky">
+            <!-- BroncoHacks Hackathon -->
+            <a href="#post-1" class="post-link">
+              <span class="post-link-text">
+                <span class="post-link-title">BroncoHacks Hackathon</span>
+                <span class="post-link-snippet">Hey guys, there's BroncoHacks coming up and I am a judge. Comment...</span>
+                <span class="post-link-date">2 days ago</span>
+              </span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+
+            <!-- Resume Review Workshop -->
+            <a href="#post-2" class="post-link">
+              <span class="post-link-text">
+                <span class="post-link-title">Resume Review Workshop</span>
+                <span class="post-link-snippet">I'm hosting a resume review workshop this Friday at 4 PM in the...</span>
+                <span class="post-link-date">5 days ago</span>
+              </span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+
+            <!-- Summer Internship Referrals -->
+            <a href="#post-3" class="post-link">
+              <span class="post-link-text">
+                <span class="post-link-title">Summer Internship Referrals</span>
+                <span class="post-link-snippet">My company is hiring summer software interns. Message me if you'd...</span>
+                <span class="post-link-date">1 week ago</span>
+              </span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+
+            <!-- Mock Interview Night -->
+            <a href="#post-4" class="post-link">
+              <span class="post-link-text">
+                <span class="post-link-title">Mock Interview Night</span>
+                <span class="post-link-snippet">Sign up for a 20-minute mock interview next Wednesday evening. Great...</span>
+                <span class="post-link-date">2 weeks ago</span>
+              </span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Right container: the selected post + its comments -->
+      <div class="right-side">
+        <!-- BroncoHacks Hackathon (shown when #post-1 is selected) -->
+        <section class="post-detail" id="post-1">
+          <article class="post-card">
+            <div class="author-row">
+              <svg class="avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+              <div class="author-info">
+                <span class="author-name">Ricky</span>
+                <span class="author-role">Alumni Mentor &middot; 2 days ago</span>
+              </div>
+            </div>
+            <h2 class="post-title">BroncoHacks Hackathon</h2>
+            <p class="post-body">Hey guys, there's BroncoHacks coming up and I am a judge. Comment JOIN if you want more details on how to join the hackathon!</p>
+            <div class="action-row">
+              <div class="like-group">
+                <label class="icon-btn">
+                  <input type="checkbox" name="like-1" aria-label="Like BroncoHacks Hackathon" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </label>
+                <span>12 likes</span>
+              </div>
+              <label class="icon-btn">
+                <input type="checkbox" name="bookmark-1" aria-label="Bookmark BroncoHacks Hackathon" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </label>
+            </div>
+          </article>
+
+          <div class="comments-panel">
+            <h3 class="comments-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg> Comments</h3>
+            <div class="comment-list">
+              <div class="comment-item">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">Sam C.</span>
+                  <span>JOIN! This sounds awesome.</span>
+                </div>
+              </div>
+
+              <div class="comment-item">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">Ryan G.</span>
+                  <span>JOIN. Do we need a full team to sign up?</span>
+                </div>
+              </div>
+              <!-- Simulated: appears after pressing Post -->
+              <div class="comment-item new-comment" id="post-1-commented">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">You <span class="just-now">&middot; Just now</span></span>
+                  <span>JOIN! I'd love more details about the hackathon.</span>
+                </div>
+              </div>
+            </div>
+            <form class="composer" action="#post-1-commented" method="get">
+              <input type="text" name="comment" placeholder="Add a comment..." aria-label="Write a comment on BroncoHacks Hackathon" />
+              <button type="submit" class="pill-btn">Post</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Resume Review Workshop (shown when #post-2 is selected) -->
+        <section class="post-detail" id="post-2">
+          <article class="post-card">
+            <div class="author-row">
+              <svg class="avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+              <div class="author-info">
+                <span class="author-name">Ricky</span>
+                <span class="author-role">Alumni Mentor &middot; 5 days ago</span>
+              </div>
+            </div>
+            <h2 class="post-title">Resume Review Workshop</h2>
+            <p class="post-body">I'm hosting a resume review workshop this Friday at 4 PM in the career center. Bring a printed copy of your resume!</p>
+            <div class="action-row">
+              <div class="like-group">
+                <label class="icon-btn">
+                  <input type="checkbox" name="like-2" aria-label="Like Resume Review Workshop" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </label>
+                <span>8 likes</span>
+              </div>
+              <label class="icon-btn">
+                <input type="checkbox" name="bookmark-2" aria-label="Bookmark Resume Review Workshop" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </label>
+            </div>
+          </article>
+
+          <div class="comments-panel">
+            <h3 class="comments-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg> Comments</h3>
+            <div class="comment-list">
+              <div class="comment-item">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">Lorelai G.</span>
+                  <span>Can we join virtually if we can't make it in person?</span>
+                </div>
+              </div>
+              <!-- Simulated: appears after pressing Post -->
+              <div class="comment-item new-comment" id="post-2-commented">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">You <span class="just-now">&middot; Just now</span></span>
+                  <span>I'll be there. Thanks for hosting this!</span>
+                </div>
+              </div>
+            </div>
+            <form class="composer" action="#post-2-commented" method="get">
+              <input type="text" name="comment" placeholder="Add a comment..." aria-label="Write a comment on Resume Review Workshop" />
+              <button type="submit" class="pill-btn">Post</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Summer Internship Referrals (shown when #post-3 is selected) -->
+        <section class="post-detail" id="post-3">
+          <article class="post-card">
+            <div class="author-row">
+              <svg class="avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+              <div class="author-info">
+                <span class="author-name">Ricky</span>
+                <span class="author-role">Alumni Mentor &middot; 1 week ago</span>
+              </div>
+            </div>
+            <h2 class="post-title">Summer Internship Referrals</h2>
+            <p class="post-body">My company is hiring summer software interns. Message me if you'd like a referral and I'll walk you through the process.</p>
+            <div class="action-row">
+              <div class="like-group">
+                <label class="icon-btn">
+                  <input type="checkbox" name="like-3" aria-label="Like Summer Internship Referrals" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </label>
+                <span>21 likes</span>
+              </div>
+              <label class="icon-btn">
+                <input type="checkbox" name="bookmark-3" aria-label="Bookmark Summer Internship Referrals" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </label>
+            </div>
+          </article>
+
+          <div class="comments-panel">
+            <h3 class="comments-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg> Comments</h3>
+            <div class="comment-list">
+              <div class="comment-item">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">Kaiden C.</span>
+                  <span>Interested! Just sent you a message.</span>
+                </div>
+              </div>
+
+              <div class="comment-item">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">Emma K.</span>
+                  <span>Is this open to sophomores too?</span>
+                </div>
+              </div>
+              <!-- Simulated: appears after pressing Post -->
+              <div class="comment-item new-comment" id="post-3-commented">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">You <span class="just-now">&middot; Just now</span></span>
+                  <span>This is a great opportunity, thank you for sharing!</span>
+                </div>
+              </div>
+            </div>
+            <form class="composer" action="#post-3-commented" method="get">
+              <input type="text" name="comment" placeholder="Add a comment..." aria-label="Write a comment on Summer Internship Referrals" />
+              <button type="submit" class="pill-btn">Post</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Mock Interview Night (shown when #post-4 is selected) -->
+        <section class="post-detail" id="post-4">
+          <article class="post-card">
+            <div class="author-row">
+              <svg class="avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+              <div class="author-info">
+                <span class="author-name">Ricky</span>
+                <span class="author-role">Alumni Mentor &middot; 2 weeks ago</span>
+              </div>
+            </div>
+            <h2 class="post-title">Mock Interview Night</h2>
+            <p class="post-body">Sign up for a 20-minute mock interview next Wednesday evening. Great practice before career fair season.</p>
+            <div class="action-row">
+              <div class="like-group">
+                <label class="icon-btn">
+                  <input type="checkbox" name="like-4" aria-label="Like Mock Interview Night" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </label>
+                <span>5 likes</span>
+              </div>
+              <label class="icon-btn">
+                <input type="checkbox" name="bookmark-4" aria-label="Bookmark Mock Interview Night" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </label>
+            </div>
+          </article>
+
+          <div class="comments-panel">
+            <h3 class="comments-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg> Comments</h3>
+            <div class="comment-list">
+              <p class="no-comments">No comments yet. Be the first!</p>
+              <!-- Simulated: appears after pressing Post -->
+              <div class="comment-item new-comment" id="post-4-commented">
+                <svg class="comment-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>
+                <div class="comment-text">
+                  <span class="comment-name">You <span class="just-now">&middot; Just now</span></span>
+                  <span>Signed up! Excited to practice before the career fair.</span>
+                </div>
+              </div>
+            </div>
+            <form class="composer" action="#post-4-commented" method="get">
+              <input type="text" name="comment" placeholder="Add a comment..." aria-label="Write a comment on Mock Interview Night" />
+              <button type="submit" class="pill-btn">Post</button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Bottom Tab Navigation (same as home) -->
+    <nav class="bottom-nav" aria-label="Primary Navigation">
+      <!-- Home -->
+      <a href="home_alumni.html" class="nav-item" aria-label="Home">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+          <path d="M3 10.5L12 3l9 7.5"></path>
+          <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"></path>
+          <path d="M10 20v-6h4v6"></path>
         </svg>
-        <span>Home</span>
-        </a>
+      </a>
 
-      <button class="nav-item" aria-label="Coffee Chat">
+      <!-- Coffee Chat -->
+      <a href="#" class="nav-item" aria-label="Coffee Chats">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <!-- speech bubble -->
+          <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
+          <!-- coffee cup inside -->
+          <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
+          <path d="M14.5 11h.8a1.4 1.4 0 0 1 0 2.8h-.8"></path>
+          <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
+          <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
+        </svg>
+      </a>
+
+      <!-- Posts -->
+      <a href="post.html" class="nav-item" aria-label="Posts" aria-current="page">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17 11h1a3 3 0 0 1 0 6h-1"></path>
-          <path d="M5 11h12v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-6z"></path>
-          <line x1="8" y1="5" x2="8" y2="8"></line>
-          <line x1="11" y1="5" x2="11" y2="8"></line>
-          <line x1="14" y1="5" x2="14" y2="8"></line>
+          <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+          <line x1="8" y1="8" x2="16" y2="8"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+          <line x1="8" y1="16" x2="13" y2="16"></line>
         </svg>
-        <span>Coffee Chats</span>
-      </button>
+      </a>
 
-      <button class="nav-item" aria-label="Community">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9.5" cy="8.5" r="3.2"></circle>
-          <path d="M4 19.5c0-3.2 2.4-5.5 5.5-5.5s5.5 2.3 5.5 5.5"></path>
-          <path d="M14.5 5.6a3.2 3.2 0 0 1 0 5.8"></path>
-          <path d="M16.5 14.2c2.3.5 4 2.5 4 5.3"></path>
-        </svg>
-        <span>Community</span>
-      </button>
-
-      <button class="nav-item" aria-label="Profile">
+      <!-- Profile -->
+      <a href="#" class="nav-item" aria-label="Profile">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="9.5"></circle>
-          <circle cx="12" cy="9.5" r="3"></circle>
-          <path d="M6.5 19c1.2-2.8 3.2-4 5.5-4s4.3 1.2 5.5 4"></path>
+          <circle cx="12" cy="9.5" r="2.8"></circle>
+          <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
         </svg>
-        <span>Profile</span>
-      </button>
-    </aside>
-
-    <!-- Main Desktop Workspace -->
-    <div class="main-area">
-      <!-- Top Header -->
-      <header class="top-bar">
-        <a href="home.html" class="back-btn" aria-label="Back">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-        </a>
-        <h1>Alumni post</h1>
-      </header>
-
-      <!-- Post & Comments Container -->
-      <main class="content-wrapper">
-        <!-- Author Info Placeholder -->
-        <div class="author-row">
-          <svg class="avatar-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.6">
-            <circle cx="18" cy="18" r="16"></circle>
-            <circle cx="18" cy="13.5" r="5"></circle>
-            <path d="M8.5 29.5c2-4.8 5.5-7 9.5-7s7.5 2.2 9.5 7" stroke-linecap="round"></path>
-          </svg>
-          <div class="skeleton-group">
-            <div class="skeleton-bar"></div>
-            <div class="skeleton-bar"></div>
-          </div>
-        </div>
-
-        <!-- Post Content -->
-        <div class="post-box">
-          Hey guys, there’s BroncoHacks coming up and I am a judge. Comment JOIN, if you want more details on how to join the hackathon[cite: 1]
-        </div>
-
-        <!-- Like & Bookmark Bar -->
-        <div class="action-row">
-          <div class="like-group">
-            <button class="icon-btn" id="likeBtn" aria-label="Like">
-              <svg id="heartIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-              </svg>
-            </button>
-            <div class="like-skeleton"></div>
-          </div>
-
-          <button class="icon-btn" id="bookmarkBtn" aria-label="Bookmark">
-            <svg id="bookmarkIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Comments -->
-        <h2 class="comments-heading">Comments</h2>
-        <div class="comment-list" id="commentList"></div>
-
-        <!-- Comment Input -->
-        <div class="comment-input-wrapper">
-          <form class="comment-input-box" id="commentForm">
-            <input type="text" id="commentInput" placeholder="Add a comment..." aria-label="Write a comment" />
-            <button type="submit" class="post-btn">Post</button>
-          </form>
-        </div>
-      </main>
-    </div>
+      </a>
+    </nav>
   </div>
-
-  <script>
-    const likeBtn = document.getElementById('likeBtn');
-    const heartIcon = document.getElementById('heartIcon');
-    likeBtn.addEventListener('click', () => {
-      const liked = heartIcon.getAttribute('fill') === '#e0245e';
-      heartIcon.setAttribute('fill', liked ? 'none' : '#e0245e');
-      heartIcon.setAttribute('stroke', liked ? 'currentColor' : '#e0245e');
-    });
-
-    const bookmarkBtn = document.getElementById('bookmarkBtn');
-    const bookmarkIcon = document.getElementById('bookmarkIcon');
-    bookmarkBtn.addEventListener('click', () => {
-      const saved = bookmarkIcon.getAttribute('fill') === '#222222';
-      bookmarkIcon.setAttribute('fill', saved ? 'none' : '#222222');
-    });
-
-    const commentForm = document.getElementById('commentForm');
-    const commentInput = document.getElementById('commentInput');
-    const commentList = document.getElementById('commentList');
-    commentForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = commentInput.value.trim();
-      if (!text) return;
-
-      const item = document.createElement('div');
-      item.className = 'comment-item';
-      item.innerHTML = `
-        <div class="comment-avatar">U</div>
-        <div style="font-size: 15px; color: #222;">${text.replace(/</g, '&lt;')}</div>
-      `;
-      commentList.appendChild(item);
-      commentInput.value = '';
-    });
-  </script>
 </body>
 </html>

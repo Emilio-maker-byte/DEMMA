@@ -157,6 +157,30 @@
     .continue-btn:active {
       background-color: #141414;
     }
+
+    /* Show the right button for the selected role (no JavaScript) */
+    .continue-student,
+    .continue-alumni {
+      display: none;
+    }
+
+    .content:has(.role-radio[value="student"]:checked) .continue-student,
+    .content:has(.role-radio[value="alumni"]:checked) .continue-alumni {
+      display: block;
+    }
+
+    .content:has(.role-radio:checked) .continue-none {
+      display: none;
+    }
+
+    /* Nothing selected yet: button looks disabled */
+    .continue-none,
+    .continue-none:hover,
+    .continue-none:active {
+      background-color: #c9c9c9;
+      color: #ffffff;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -165,7 +189,7 @@
 
     <div class="content">
       <div>
-        <h1>Hi there! We are excited for you to find your mentor!</h1>
+        <h1>Hi there! We are excited for you to find your mentor/mentee!</h1>
         <p class="subtitle">Tell us a little about yourself so we can find your people.</p>
 
         <div class="options-group" role="radiogroup" aria-label="Choose your role">
@@ -206,8 +230,10 @@
         </div>
       </div>
 
-      <!-- Links to your dashboard file -->
-      <a href="home.html" class="continue-btn">Let's get started</a>
+      <!-- One button per role; CSS shows the one that matches the selected card -->
+      <span class="continue-btn continue-none" aria-disabled="true">Choose a role to continue</span>
+      <a href="home_student.html" class="continue-btn continue-student">Let's get started</a>
+      <a href="home_alumni.html" class="continue-btn continue-alumni">Let's get started</a>
     </div>
   </main>
 </body>

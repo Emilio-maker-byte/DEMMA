@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Choose your role</title>
+  <title>Welcome to Demma</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -12,7 +13,7 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: #f4f4f4;
       color: #262626;
       display: flex;
@@ -32,78 +33,120 @@
       padding: 16px 20px;
       text-align: center;
       border-bottom: 2px solid #262626;
+      font-family: "Sora", sans-serif;
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .content {
       width: 100%;
       max-width: 600px;
       margin: 0 auto;
-      padding: 36px 32px;
+      padding: 48px 32px;
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
+    /* Friendly greeting */
     h1 {
-      font-size: 19px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      letter-spacing: -0.2px;
+      font-family: "Sora", sans-serif;
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      text-align: center;
     }
 
+    .subtitle {
+      text-align: center;
+      font-size: 16px;
+      color: #555555;
+      margin-bottom: 32px;
+    }
+
+    /* Role cards */
     .options-group {
-      border-left: 1px solid #262626;
-      border-right: 1px solid #262626;
-      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
     }
 
     .role-card {
       display: flex;
-      flex-direction: column;
-      padding: 20px 20px 24px;
-      border-top: 2px solid #262626;
-      border-bottom: 2px solid #262626;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 20px;
+      border: 1.5px solid #262626;
+      border-radius: 18px;
       background-color: #ffffff;
-      cursor: default;
+      cursor: pointer;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .role-card + .role-card {
-      margin-top: 14px;
+    .role-card:hover {
+      background-color: #fafafa;
+    }
+
+    /* The radio circle = the selection indicator */
+    .role-radio {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      accent-color: #262626;
+      cursor: pointer;
+    }
+
+    /* Highlight the whole card when its radio is selected */
+    .role-card:has(.role-radio:checked) {
+      background-color: #f1f1f1;
+      box-shadow: 0 0 0 2px #262626;
+    }
+
+    /* Visible outline for keyboard users */
+    .role-card:has(.role-radio:focus-visible) {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 3px;
+    }
+
+    .role-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
     }
 
     .role-text {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .role-title {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       line-height: 1.2;
     }
 
     .role-description {
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.4;
-      color: #333333;
+      color: #444444;
     }
 
+    /* Rounded button */
     .continue-btn {
       display: block;
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       background-color: #262626;
       color: #ffffff;
-      border: none;
-      font-size: 16px;
+      border-radius: 999px;
+      font-size: 17px;
       font-weight: 700;
       text-align: center;
       text-decoration: none;
-      cursor: pointer;
       transition: background-color 0.15s ease;
     }
 
@@ -118,37 +161,53 @@
 </head>
 <body>
   <main class="screen">
-    <header class="header">Choose your role</header>
+    <header class="header">Welcome to Demma</header>
 
     <div class="content">
       <div>
-        <h1>Are you a Student or Alumni?</h1>
+        <h1>Hi there! We are excited for you to find your mentor!</h1>
+        <p class="subtitle">Tell us a little about yourself so we can find your people.</p>
 
-        <div class="options-group">
-          <!-- Student Card (Non-interactive) -->
-          <div class="role-card">
+        <div class="options-group" role="radiogroup" aria-label="Choose your role">
+          <!-- Student Card (radio button) -->
+          <label class="role-card">
+            <input type="radio" name="role" value="student" class="role-radio" />
+            <!-- Graduation cap icon -->
+            <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 9l10-5 10 5-10 5-10-5z"></path>
+              <path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"></path>
+              <line x1="22" y1="9" x2="22" y2="15"></line>
+            </svg>
             <div class="role-text">
-              <span class="role-title">Student</span>
+              <span class="role-title">I'm a Student</span>
               <span class="role-description">
-                Find alumni mentors and explore your career options.
+                Meet alumni mentors over a coffee chat and explore where your career can go.
               </span>
             </div>
-          </div>
+          </label>
 
-          <!-- Alumni Card (Non-interactive) -->
-          <div class="role-card">
+          <!-- Alumni Card (radio button) -->
+          <label class="role-card">
+            <input type="radio" name="role" value="alumni" class="role-radio" />
+            <!-- Two people icon (same as Community tab) -->
+            <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9.5" cy="8.5" r="3.5"></circle>
+              <path d="M3.5 19.5c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path>
+              <path d="M15.5 5.5a3.5 3.5 0 0 1 0 6.5"></path>
+              <path d="M17.5 14.5c2 .6 3.5 2.3 3.5 5"></path>
+            </svg>
             <div class="role-text">
-              <span class="role-title">Alumni</span>
+              <span class="role-title">I'm an Alumni</span>
               <span class="role-description">
-                Share your experience and mentor current students.
+                Share what you've learned and help a student take their next step.
               </span>
             </div>
-          </div>
+          </label>
         </div>
       </div>
 
       <!-- Links to your dashboard file -->
-      <a href="home.html" class="continue-btn">Continue</a>
+      <a href="home.html" class="continue-btn">Let's get started</a>
     </div>
   </main>
 </body>

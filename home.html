@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demma Dashboard - Hi Ricky!</title>
+  <title>Demma Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     * {
@@ -29,35 +29,40 @@
       min-height: 100vh;
     }
 
-    /* Header */
+    /* Black Header Bar */
     .top-bar {
-      padding: 20px 18px 14px;
-      border-top: 2px solid #2b2b2b;
-      border-bottom: 2px solid #2b2b2b;
-    }
-
-    .top-bar h1 {
+      padding: 16px 40px;
+      background-color: #2b2b2b;
+      color: #ffffff;
       font-family: "Sora", sans-serif;
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 800;
-      letter-spacing: 0.5px;
     }
 
-    /* Main Scrollable Content */
+    /* Main Content (vertically centered so it fits one screen) */
     .content {
       flex: 1;
-      padding: 24px 40px;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 40px;
+    }
+
+    /* Two half-screen containers; each centers its content */
+    .left-side,
+    .right-side {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 40px;
+    }
+
+    .right-side {
+      background-color: #f4f4f4;
     }
 
     /* Right column that holds the card sections */
     .cards-column {
       width: 100%;
       max-width: 380px;
-      margin-right: 60px;
     }
 
     /* Welcome Banner */
@@ -72,8 +77,8 @@
 
     /* Left half: banner + reminder */
     .left-column {
-      width: 50%;
-      align-self: center;
+      width: 100%;
+      max-width: 520px;
     }
 
     /* Reminder Card */
@@ -117,14 +122,14 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      margin-bottom: 34px;
+      margin-bottom: 20px;
     }
 
     .action-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 40px 18px;
+      padding: 28px 18px;
       border: 1.5px solid #2b2b2b;
       border-radius: 18px;
       background-color: #ffffff;
@@ -189,6 +194,7 @@
 
     .post-card {
       gap: 18px;
+      padding: 14px 18px;
     }
 
     /* Profile + title group, centered in the card.
@@ -264,31 +270,32 @@
     @media (max-width: 700px) {
       .content {
         flex-direction: column;
+      }
+
+      .left-side,
+      .right-side {
         padding: 24px 20px;
       }
 
       .left-column,
       .cards-column {
-        width: 100%;
         max-width: none;
-        margin-right: 0;
       }
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- Top Header -->
-    <header class="top-bar">
-      <h1>Hi Ricky!</h1>
-    </header>
+    <!-- Black Header Bar -->
+    <header class="top-bar">Demma</header>
 
     <!-- Main Body -->
     <main class="content">
-      <!-- Welcome Banner -->
+      <!-- Left container: banner + reminder -->
+      <div class="left-side">
       <div class="left-column">
         <div class="welcome-card">
-          Welcome to Demma! Find your mentee today with a simple coffee chat!
+          Find your mentee today with a simple coffee chat!
         </div>
 
         <!-- Reminder Card -->
@@ -303,7 +310,10 @@
           </div>
         </div>
       </div>
+      </div>
 
+      <!-- Right container: card sections -->
+      <div class="right-side">
       <div class="cards-column">
       <!-- Find Your Future Mentee -->
       <section>
@@ -328,7 +338,7 @@
           </a>
 
           <a href="#" class="action-card">
-            <span class="card-text">Ready to commit to a mentorship</span>
+            <span class="card-text">Ready to Establish an Official Mentorship</span>
             <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
@@ -392,6 +402,7 @@
           </svg>
         </a>
       </section>
+      </div>
       </div>
     </main>
 

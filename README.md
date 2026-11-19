@@ -1,2 +1,2 @@
 
-Start project by opening main.html first which 
+Start project by opening main.html first.

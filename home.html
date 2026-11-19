@@ -52,7 +52,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px 40px;
+      padding: 20px 40px 100px; /* bottom room for the nav */
     }
 
     .right-side {
@@ -155,7 +155,12 @@
       grid-template-columns: repeat(4, 1fr);
       width: calc(100% - 40px);
       max-width: 480px;
-      margin: 0 auto 20px;
+      /* Floats over the page so both halves reach the bottom edge */
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 10;
       border: 2px solid #2b2b2b;
       border-radius: 999px;
       overflow: hidden;
@@ -277,6 +282,10 @@
         padding: 24px 20px;
       }
 
+      .right-side {
+        padding-bottom: 100px;
+      }
+
       .left-column,
       .cards-column {
         max-width: none;
@@ -337,7 +346,7 @@
             </svg>
           </a>
 
-          <a href="#" class="action-card">
+          <a href="mentees.html" class="action-card">
             <span class="card-text">Ready to Establish an Official Mentorship</span>
             <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>

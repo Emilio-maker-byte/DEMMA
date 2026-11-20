@@ -20,7 +20,7 @@
 
     .app-container {
       width: 100%;
-      height: 100vh;
+      min-height: 100vh; /* grows with the cards so the whole page scrolls */
       background-color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -52,11 +52,9 @@
       padding: 32px 40px 24px;
     }
 
-    /* Bottom: gray band holding the cards (scrolls if the screen is short) */
+    /* Bottom: gray band holding the cards (page scrolls, not this box) */
     .right-side {
       flex: 1;
-      min-height: 0;
-      overflow-y: auto;
       padding: 28px 40px 100px; /* bottom room for the nav */
       background-color: #f4f4f4;
     }
@@ -335,6 +333,128 @@
       display: none;
     }
 
+    /* Calendar (radio buttons styled as days, no JavaScript) */
+    .cal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .cal-dow {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8a8a8a;
+      padding-bottom: 2px;
+    }
+
+    .cal-day {
+      position: relative;
+    }
+
+    .cal-day input,
+    .slot input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cal-day span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #b5b5b5;
+    }
+
+    /* Days the mentor is free */
+    .cal-day.open span {
+      border: 1.5px solid #2b2b2b;
+      color: #2b2b2b;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .cal-day.open span:hover {
+      background-color: #f1f1f1;
+    }
+
+    .cal-day.today span {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .cal-day input:checked + span,
+    .slot input:checked + span {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .cal-day input:focus-visible + span,
+    .slot input:focus-visible + span {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    .slot-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .slot {
+      position: relative;
+    }
+
+    .slot span {
+      display: inline-block;
+      padding: 8px 14px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .slot span:hover {
+      background-color: #f1f1f1;
+    }
+
+    .cal-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #555555;
+    }
+
+    .cal-legend i {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 4px;
+    }
+
+    #scheduled:target .scheduled-msg {
+      display: block;
+    }
+
     /* Bottom Navigation (same floating pill as home) */
     .bottom-nav {
       display: grid;
@@ -378,15 +498,6 @@
 
     /* On phones: one column of cards, page scrolls normally */
     @media (max-width: 700px) {
-      .app-container {
-        height: auto;
-        min-height: 100vh;
-      }
-
-      .right-side {
-        overflow-y: visible;
-      }
-
       .top-bar,
       .left-side,
       .right-side {
@@ -414,7 +525,7 @@
             <circle cx="12" cy="9.5" r="2.8"></circle>
             <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
           </svg>
-          <h1>You've officially started a mentorship with Emma K.!</h1>
+          <h1>You've officially started a mentorship with <span data-name="full">your mentee</span>!</h1>
           <p class="subtitle">Here's everything you need to get going together.</p>
         </div>
       </div>
@@ -422,14 +533,14 @@
       <!-- Right container: cards -->
       <div class="right-side">
         <div class="cards-column">
-          <!-- Discord + Connect stacked in one column -->
+          <!-- Discord + Connect + calendar stacked in one column -->
           <div class="link-stack">
             <!-- 1. Message on Discord -->
             <a href="#" class="link-card">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path>
               </svg>
-              <span class="card-text">Message Emma on your mentorship Discord server</span>
+              <span class="card-text">Message <span data-name="first">your mentee</span> on your mentorship Discord server</span>
               <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
@@ -443,14 +554,78 @@
                 <line x1="19" y1="8" x2="19" y2="14"></line>
                 <line x1="16" y1="11" x2="22" y2="11"></line>
               </svg>
-              <span class="card-text">Connect with Emma</span>
+              <span class="card-text">Connect with <span data-name="first">your mentee</span></span>
               <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </a>
+
+            <!-- 3. Schedule a talk with the mentee (calendar, plain form) -->
+            <form class="panel" id="scheduled" action="#scheduled" method="get">
+              <h2 class="panel-title">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3.5" y="5" width="17" height="15.5" rx="2"></rect>
+                  <line x1="3.5" y1="10" x2="20.5" y2="10"></line>
+                  <line x1="8" y1="3" x2="8" y2="7"></line>
+                  <line x1="16" y1="3" x2="16" y2="7"></line>
+                </svg>
+                Schedule a Talk with <span data-name="first">Your Mentee</span>
+              </h2>
+
+              <div class="cal-head">
+                <span>November 2026</span>
+              </div>
+
+              <div class="cal-grid" role="radiogroup" aria-label="Pick a day">
+                <span class="cal-dow">S</span><span class="cal-dow">M</span><span class="cal-dow">T</span><span class="cal-dow">W</span><span class="cal-dow">T</span><span class="cal-dow">F</span><span class="cal-dow">S</span>
+                <!-- Nov 1, 2026 is a Sunday. Add class="open" + a radio to make a day bookable -->
+                <span class="cal-day"><span>1</span></span>
+                <span class="cal-day"><span>2</span></span>
+                <span class="cal-day"><span>3</span></span>
+                <span class="cal-day"><span>4</span></span>
+                <span class="cal-day"><span>5</span></span>
+                <span class="cal-day"><span>6</span></span>
+                <span class="cal-day"><span>7</span></span>
+                <span class="cal-day"><span>8</span></span>
+                <span class="cal-day"><span>9</span></span>
+                <span class="cal-day"><span>10</span></span>
+                <span class="cal-day"><span>11</span></span>
+                <span class="cal-day"><span>12</span></span>
+                <span class="cal-day"><span>13</span></span>
+                <span class="cal-day"><span>14</span></span>
+                <span class="cal-day"><span>15</span></span>
+                <span class="cal-day"><span>16</span></span>
+                <span class="cal-day"><span>17</span></span>
+                <span class="cal-day"><span>18</span></span>
+                <span class="cal-day today"><span>19</span></span>
+                <label class="cal-day open"><input type="radio" name="day" value="2026-11-20" aria-label="Friday, November 20" /><span>20</span></label>
+                <span class="cal-day"><span>21</span></span>
+                <span class="cal-day"><span>22</span></span>
+                <label class="cal-day open"><input type="radio" name="day" value="2026-11-23" aria-label="Monday, November 23" /><span>23</span></label>
+                <span class="cal-day"><span>24</span></span>
+                <label class="cal-day open"><input type="radio" name="day" value="2026-11-25" aria-label="Wednesday, November 25" /><span>25</span></label>
+                <span class="cal-day"><span>26</span></span>
+                <span class="cal-day"><span>27</span></span>
+                <span class="cal-day"><span>28</span></span>
+                <span class="cal-day"><span>29</span></span>
+                <label class="cal-day open"><input type="radio" name="day" value="2026-11-30" aria-label="Monday, November 30" /><span>30</span></label>
+              </div>
+
+              <p class="cal-legend"><i></i> Days you're available</p>
+
+              <div class="slot-row" role="radiogroup" aria-label="Pick a time">
+                <label class="slot"><input type="radio" name="time" value="10:00" /><span>10:00 AM</span></label>
+                <label class="slot"><input type="radio" name="time" value="13:30" /><span>1:30 PM</span></label>
+                <label class="slot"><input type="radio" name="time" value="16:00" /><span>4:00 PM</span></label>
+              </div>
+
+              <!-- Simulated: shows after pressing Request Talk -->
+              <p class="confirm-msg scheduled-msg">&#10003; Invite sent! <span data-name="first">Your mentee</span> will get it on your Discord server.</p>
+              <button type="submit" class="pill-btn">Send Invite</button>
+            </form>
           </div>
 
-          <!-- 3. Post an opportunity to mentees (plain form, no JavaScript) -->
+          <!-- 4. Post an opportunity to mentees (plain form, no JavaScript) -->
           <form class="panel" id="posted" action="#posted" method="get">
             <h2 class="panel-title">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -471,7 +646,7 @@
             <button type="submit" class="pill-btn">Post to Mentees</button>
           </form>
 
-          <!-- 4. Quick questions from mentees (edit or add <details> blocks) -->
+          <!-- 5. Quick questions from mentees (edit or add <details> blocks) -->
           <div class="panel">
             <h2 class="panel-title">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -584,5 +759,6 @@
       </a>
     </nav>
   </div>
+  <script src="person_name.js"></script>
 </body>
 </html>

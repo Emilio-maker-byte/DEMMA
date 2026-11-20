@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demma Mentorship</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #2b2b2b;
+    }
+
+    .app-container {
+      width: 100%;
+      min-height: 100vh; /* grows with the cards so the whole page scrolls */
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Black Header Bar (same as home) */
+    .top-bar {
+      padding: 16px 40px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: "Sora", sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    /* Two half-screen containers (same as home) */
+    /* Title on top, cards spread out in a row below */
+    .content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top: centered title */
+    .left-side {
+      display: flex;
+      justify-content: center;
+      padding: 32px 40px 24px;
+    }
+
+    /* Bottom: gray band holding the cards (page scrolls, not this box) */
+    .right-side {
+      flex: 1;
+      padding: 28px 40px 100px; /* bottom room for the nav */
+      background-color: #f4f4f4;
+    }
+
+    .intro {
+      max-width: 760px;
+      text-align: center;
+    }
+
+    .intro-avatar {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: "Sora", sans-serif;
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #555555;
+    }
+
+    /* Cards side by side; wraps to fewer columns on smaller screens */
+    .cards-column {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .cards-column {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .link-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Link cards (same look as home action cards) */
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 100px;
+      padding: 22px 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .link-card:hover {
+      background-color: #fafafa;
+    }
+
+    .link-card .card-text {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .chevron {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Panel cards (posts + questions) */
+    .panel {
+      padding: 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .panel-title .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Form fields */
+    .field {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #2b2b2b;
+      background-color: #ffffff;
+    }
+
+    textarea.field {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .field:focus {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    /* Image attachment */
+    .file-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .file-field {
+      display: block;
+      width: 100%;
+      margin-bottom: 14px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #555555;
+    }
+
+    /* Style the browser's "Choose File" button as an outlined pill */
+    .file-field::file-selector-button {
+      margin-right: 10px;
+      padding: 8px 16px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      background-color: #ffffff;
+      color: #2b2b2b;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .file-field::file-selector-button:hover {
+      background-color: #f1f1f1;
+    }
+
+    .file-field:focus-visible {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    /* Small pill button */
+    .pill-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      background-color: #3b3b3b;
+    }
+
+    /* Quick questions: each one opens to an answer box (no JavaScript) */
+    .question {
+      border-top: 1.5px solid #e0e0e0;
+    }
+
+    .question summary {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .question summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .question-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .asker {
+      font-size: 12px;
+      font-weight: 700;
+      color: #555555;
+    }
+
+    .question-body {
+      font-size: 14px;
+    }
+
+    .question .chevron {
+      margin-top: 4px;
+      transition: transform 0.15s ease;
+    }
+
+    .question[open] .chevron {
+      transform: rotate(90deg);
+    }
+
+    .question form {
+      padding-bottom: 14px;
+    }
+
+    /* Simulated responses (the #id in the address picks which one) */
+    .confirm-msg {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background-color: #f1f1f1;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    #posted:target .posted-msg {
+      display: block;
+    }
+
+    /* Answered question: badge in the row, form swapped for a message */
+    .answered-badge {
+      display: none;
+      align-self: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .question:target .answered-badge,
+    .question:target .confirm-msg {
+      display: inline-block;
+    }
+
+    .question:target form {
+      display: none;
+    }
+
+    /* Bottom Navigation (same floating pill as home) */
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: calc(100% - 40px);
+      max-width: 480px;
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 10;
+      border: 2px solid #2b2b2b;
+      border-radius: 999px;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 0 18px;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .nav-item + .nav-item {
+      border-left: 1.5px solid #2b2b2b;
+    }
+
+    .nav-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* Current page in the nav */
+    .nav-item[aria-current="page"] {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    /* On phones: one column of cards, page scrolls normally */
+    @media (max-width: 700px) {
+      .top-bar,
+      .left-side,
+      .right-side {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .cards-column {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ---- Student-only additions ---- */
+
+    /* Second line of text inside a link card */
+    .card-text small {
+      display: block;
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: 400;
+      color: #555555;
+    }
+
+    .panel-note {
+      margin: -4px 0 12px;
+      font-size: 13px;
+      color: #555555;
+    }
+
+    /* Calendar (radio buttons styled as days, no JavaScript) */
+    .cal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .cal-dow {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8a8a8a;
+      padding-bottom: 2px;
+    }
+
+    .cal-day {
+      position: relative;
+    }
+
+    .cal-day input,
+    .slot input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cal-day span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #b5b5b5;
+    }
+
+    /* Days the mentor is free */
+    .cal-day.open span {
+      border: 1.5px solid #2b2b2b;
+      color: #2b2b2b;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .cal-day.open span:hover {
+      background-color: #f1f1f1;
+    }
+
+    .cal-day.today span {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .cal-day input:checked + span,
+    .slot input:checked + span {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .cal-day input:focus-visible + span,
+    .slot input:focus-visible + span {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    .slot-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .slot {
+      position: relative;
+    }
+
+    .slot span {
+      display: inline-block;
+      padding: 8px 14px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .slot span:hover {
+      background-color: #f1f1f1;
+    }
+
+    .cal-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #555555;
+    }
+
+    .cal-legend i {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 4px;
+    }
+
+    #scheduled:target .scheduled-msg,
+    #asked:target .asked-msg {
+      display: block;
+    }
+
+    /* Your new question appears in the list after posting */
+    .my-question {
+      display: none;
+    }
+
+    #asked:target .my-question {
+      display: block;
+    }
+
+    .answer {
+      padding: 0 0 14px;
+      font-size: 14px;
+      color: #2b2b2b;
+    }
+
+    .answer .asker {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .pending {
+      padding: 0 0 14px;
+      font-size: 13px;
+      color: #8a8a8a;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Black Header Bar -->
+    <header class="top-bar">Demma</header>
+
+    <main class="content">
+      <!-- Top container: announcement -->
+      <div class="left-side">
+        <div class="intro">
+          <svg class="intro-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.5"></circle>
+            <circle cx="12" cy="9.5" r="2.8"></circle>
+            <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
+          </svg>
+          <h1>You've officially started a mentorship with <span data-name="full">your mentor</span>!</h1>
+          <p class="subtitle">Here's everything you need to get going together.</p>
+        </div>
+      </div>
+
+      <!-- Bottom container: cards -->
+      <div class="right-side">
+        <div class="cards-column">
+          <!-- 1. Join mentor's Discord -->
+          <div class="link-stack">
+            <a href="#" class="link-card">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path>
+              </svg>
+              <span class="card-text">
+                Connect with <span data-name="first">Your Mentor</span> on Discord
+                <small><span data-name="first">Your mentor</span> runs a mentorship server on Discord. Join to chat with <span data-name="first">your mentor</span> and other mentees.</small>
+              </span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </a>
+          </div>
+
+          <!-- 2. Schedule a talk (calendar, plain form, no JavaScript) -->
+          <form class="panel" id="scheduled" action="#scheduled" method="get">
+            <h2 class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3.5" y="5" width="17" height="15.5" rx="2"></rect>
+                <line x1="3.5" y1="10" x2="20.5" y2="10"></line>
+                <line x1="8" y1="3" x2="8" y2="7"></line>
+                <line x1="16" y1="3" x2="16" y2="7"></line>
+              </svg>
+              Schedule a Talk with <span data-name="first">Your Mentor</span>
+            </h2>
+
+            <div class="cal-head">
+              <span>November 2026</span>
+            </div>
+
+            <div class="cal-grid" role="radiogroup" aria-label="Pick a day">
+              <span class="cal-dow">S</span><span class="cal-dow">M</span><span class="cal-dow">T</span><span class="cal-dow">W</span><span class="cal-dow">T</span><span class="cal-dow">F</span><span class="cal-dow">S</span>
+              <!-- Nov 1, 2026 is a Sunday. Add class="open" + a radio to make a day bookable -->
+              <span class="cal-day"><span>1</span></span>
+              <span class="cal-day"><span>2</span></span>
+              <span class="cal-day"><span>3</span></span>
+              <span class="cal-day"><span>4</span></span>
+              <span class="cal-day"><span>5</span></span>
+              <span class="cal-day"><span>6</span></span>
+              <span class="cal-day"><span>7</span></span>
+              <span class="cal-day"><span>8</span></span>
+              <span class="cal-day"><span>9</span></span>
+              <span class="cal-day"><span>10</span></span>
+              <span class="cal-day"><span>11</span></span>
+              <span class="cal-day"><span>12</span></span>
+              <span class="cal-day"><span>13</span></span>
+              <span class="cal-day"><span>14</span></span>
+              <span class="cal-day"><span>15</span></span>
+              <span class="cal-day"><span>16</span></span>
+              <span class="cal-day"><span>17</span></span>
+              <span class="cal-day"><span>18</span></span>
+              <span class="cal-day today"><span>19</span></span>
+              <label class="cal-day open"><input type="radio" name="day" value="2026-11-20" aria-label="Friday, November 20" /><span>20</span></label>
+              <span class="cal-day"><span>21</span></span>
+              <span class="cal-day"><span>22</span></span>
+              <label class="cal-day open"><input type="radio" name="day" value="2026-11-23" aria-label="Monday, November 23" /><span>23</span></label>
+              <span class="cal-day"><span>24</span></span>
+              <label class="cal-day open"><input type="radio" name="day" value="2026-11-25" aria-label="Wednesday, November 25" /><span>25</span></label>
+              <span class="cal-day"><span>26</span></span>
+              <span class="cal-day"><span>27</span></span>
+              <span class="cal-day"><span>28</span></span>
+              <span class="cal-day"><span>29</span></span>
+              <label class="cal-day open"><input type="radio" name="day" value="2026-11-30" aria-label="Monday, November 30" /><span>30</span></label>
+            </div>
+
+            <p class="cal-legend"><i></i> Days <span data-name="first">your mentor</span> is available</p>
+
+            <div class="slot-row" role="radiogroup" aria-label="Pick a time">
+              <label class="slot"><input type="radio" name="time" value="10:00" /><span>10:00 AM</span></label>
+              <label class="slot"><input type="radio" name="time" value="13:30" /><span>1:30 PM</span></label>
+              <label class="slot"><input type="radio" name="time" value="16:00" /><span>4:00 PM</span></label>
+            </div>
+
+            <!-- Simulated: shows after pressing Request Talk -->
+            <p class="confirm-msg scheduled-msg">&#10003; Requested! <span data-name="first">Your mentor</span> will confirm your talk on Discord.</p>
+            <button type="submit" class="pill-btn">Request Talk</button>
+          </form>
+
+          <!-- 3. Ask the mentor a quick question (visible to everyone) -->
+          <div class="panel" id="asked">
+            <h2 class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9.5"></circle>
+                <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"></path>
+                <line x1="12" y1="17" x2="12" y2="17.01"></line>
+              </svg>
+              Ask <span data-name="first">Your Mentor</span> a Quick Question
+            </h2>
+            <p class="panel-note">Questions and answers are visible to all of <span data-name="possessive">your mentor's</span> mentees.</p>
+
+            <form action="#asked" method="get">
+              <textarea class="field" name="question" placeholder="Type a quick question..." aria-label="Your question for your mentor" data-name-label="Your question for {first}"></textarea>
+              <!-- Simulated: shows after pressing Post Question -->
+              <p class="confirm-msg asked-msg">&#10003; Posted! Everyone can see your question now.</p>
+              <button type="submit" class="pill-btn">Post Question</button>
+            </form>
+
+            <div style="height: 14px"></div>
+
+            <!-- Your question (appears after posting) -->
+            <details class="question my-question">
+              <summary>
+                <span class="question-text">
+                  <span class="asker">You</span>
+                  <span class="question-body">Your new question</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </summary>
+              <p class="pending">Waiting for <span data-name="first">your mentor</span> to answer...</p>
+            </details>
+
+            <!-- Everyone's questions (edit or add <details> blocks) -->
+            <details class="question">
+              <summary>
+                <span class="question-text">
+                  <span class="asker">Lorelai G.</span>
+                  <span class="question-body">How did you prepare for your first technical interview?</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </summary>
+              <p class="answer"><span class="asker" data-name="first">Your mentor</span>Lots of practice problems out loud with a friend. Talking through your thinking matters as much as the answer.</p>
+            </details>
+
+            <details class="question">
+              <summary>
+                <span class="question-text">
+                  <span class="asker">Ryan G.</span>
+                  <span class="question-body">Is it worth doing an internship sophomore year?</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </summary>
+              <p class="answer"><span class="asker" data-name="first">Your mentor</span>Definitely, if you can find one. Even a small role gives you something real to talk about next year.</p>
+            </details>
+
+            <details class="question">
+              <summary>
+                <span class="question-text">
+                  <span class="asker">Sam C.</span>
+                  <span class="question-body">What's one class you'd recommend taking before graduating?</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </summary>
+              <p class="pending">Waiting for <span data-name="first">your mentor</span> to answer...</p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Tab Navigation -->
+    <nav class="bottom-nav" aria-label="Primary Navigation">
+      <!-- Home -->
+      <a href="home_student.html" class="nav-item" aria-label="Home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5"></path>
+          <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"></path>
+          <path d="M10 20v-6h4v6"></path>
+        </svg>
+      </a>
+
+      <!-- Coffee Chat -->
+      <a href="#" class="nav-item" aria-label="Coffee Chats">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <!-- speech bubble -->
+          <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
+          <!-- coffee cup inside -->
+          <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
+          <path d="M14.5 11h.8a1.4 1.4 0 0 1 0 2.8h-.8"></path>
+          <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
+          <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
+        </svg>
+      </a>
+
+      <!-- Posts -->
+      <a href="post.html" class="nav-item" aria-label="Posts">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+          <line x1="8" y1="8" x2="16" y2="8"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+          <line x1="8" y1="16" x2="13" y2="16"></line>
+        </svg>
+      </a>
+
+      <!-- Profile -->
+      <a href="#" class="nav-item" aria-label="Profile">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9.5"></circle>
+          <circle cx="12" cy="9.5" r="2.8"></circle>
+          <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
+        </svg>
+      </a>
+    </nav>
+  </div>
+  <script src="person_name.js"></script>
+</body>
+</html>

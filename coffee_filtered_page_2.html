@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demma Coffee Chat</title>
+  <title>Demma Coffee Chat Step 2</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     * {
@@ -343,8 +343,7 @@
       background-color: #3b3b3b;
     }
 
-    .error-msg,
-    .confirm-msg {
+    .error-msg {
       padding: 10px 14px;
       border-radius: 12px;
       background-color: #f1f1f1;
@@ -353,42 +352,32 @@
       text-align: center;
     }
 
-    .error-msg[hidden],
-    .confirm-msg[hidden] {
+    .error-msg[hidden] {
       display: none;
     }
 
-    /* Summary shown after submitting */
-    .summary {
-      max-width: 640px;
-      margin: 0 auto;
-    }
 
-    .summary[hidden],
-    .survey[hidden] {
-      display: none;
-    }
-
-    .summary dl {
-      display: grid;
-      grid-template-columns: max-content 1fr;
-      gap: 10px 16px;
-      margin: 14px 0 18px;
-      font-size: 14px;
-    }
-
-    .summary dt {
+    /* Step label above the title */
+    .step-label {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 12px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      font-size: 12px;
       font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
-    .summary dd {
-      color: #555555;
-    }
-
-    .summary .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 14px;
+      color: #2b2b2b;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     /* Bottom Navigation (same floating pill as home) */
@@ -444,15 +433,6 @@
       .option-row {
         grid-template-columns: 1fr;
       }
-
-      .summary dl {
-        grid-template-columns: 1fr;
-        gap: 2px;
-      }
-
-      .summary dd {
-        margin-bottom: 8px;
-      }
     }
   </style>
 </head>
@@ -472,75 +452,17 @@
             <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
             <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
           </svg>
-          <h1>Coffee Chat with a Future Mentor</h1>
-          <p class="subtitle">Tell us a little about yourself and we'll match you with mentors who fit what you're looking for.</p>
+          <span class="step-label">Step 2 of 2</span>
+          <h1>What Are You Looking for in a Mentor?</h1>
+          <p class="subtitle">These careers are picked for <strong id="major-name">your major</strong>. Choose what you want in a mentor and we'll find your matches.</p>
+          <a href="coffee_filtered_page.html" class="back-link">&larr; Change my major</a>
         </div>
       </div>
 
       <!-- Bottom: survey cards -->
       <div class="right-side">
         <form class="survey" id="survey" novalidate>
-          <!-- 1. Major (dropdown) -->
-          <div class="panel">
-            <label class="panel-title" for="major">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M2 9l10-5 10 5-10 5z"></path>
-                <path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"></path>
-              </svg>
-              Your Major
-            </label>
-            <p class="panel-note">Pick the major closest to yours.</p>
-            <select class="field" id="major" name="major">
-              <option value="">Select your major...</option>
-              <option>Accounting</option>
-              <option>Biology</option>
-              <option>Business Administration</option>
-              <option>Chemistry</option>
-              <option>Communications</option>
-              <option>Computer Science</option>
-              <option>Criminal Justice</option>
-              <option>Economics</option>
-              <option>Education</option>
-              <option>Electrical Engineering</option>
-              <option>English</option>
-              <option>Finance</option>
-              <option>Graphic Design</option>
-              <option>History</option>
-              <option>Information Systems</option>
-              <option>Marketing</option>
-              <option>Mathematics</option>
-              <option>Mechanical Engineering</option>
-              <option>Nursing</option>
-              <option>Political Science</option>
-              <option>Psychology</option>
-              <option>Sociology</option>
-              <option>Undeclared</option>
-              <option>Other</option>
-            </select>
-          </div>
-
-          <!-- 2. Meeting frequency (pick one) -->
-          <fieldset class="panel">
-            <legend class="panel-title">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3.5" y="5" width="17" height="15.5" rx="2"></rect>
-                <line x1="3.5" y1="10" x2="20.5" y2="10"></line>
-                <line x1="8" y1="3" x2="8" y2="7"></line>
-                <line x1="16" y1="3" x2="16" y2="7"></line>
-              </svg>
-              Meeting Frequency
-            </legend>
-            <p class="panel-note">How often would you like to meet?</p>
-            <div class="chip-row">
-              <label class="chip"><input type="radio" name="frequency" value="Weekly" /><span>Weekly</span></label>
-              <label class="chip"><input type="radio" name="frequency" value="Every two weeks" /><span>Every two weeks</span></label>
-              <label class="chip"><input type="radio" name="frequency" value="Monthly" /><span>Monthly</span></label>
-              <label class="chip"><input type="radio" name="frequency" value="Once a semester" /><span>Once a semester</span></label>
-              <label class="chip"><input type="radio" name="frequency" value="As needed" /><span>As needed</span></label>
-            </div>
-          </fieldset>
-
-          <!-- 3. Career choices (check all that apply) -->
+          <!-- 1. Mentor's career (list depends on the major from step 1) -->
           <fieldset class="panel span-2">
             <legend class="panel-title">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -548,28 +470,17 @@
                 <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path>
                 <line x1="3" y1="13" x2="21" y2="13"></line>
               </svg>
-              Career Choices
+              Mentor's Career
             </legend>
-            <p class="panel-note">Check all the careers you're interested in.</p>
-            <div class="chip-row">
-              <label class="chip"><input type="checkbox" name="careers" value="Software Engineering" /><span>Software Engineering</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Data Science" /><span>Data Science</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Cybersecurity" /><span>Cybersecurity</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Product Management" /><span>Product Management</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="UX/UI Design" /><span>UX/UI Design</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Marketing" /><span>Marketing</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Finance &amp; Banking" /><span>Finance &amp; Banking</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Consulting" /><span>Consulting</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Healthcare" /><span>Healthcare</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Research &amp; Academia" /><span>Research &amp; Academia</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Education" /><span>Education</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Law" /><span>Law</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Nonprofit" /><span>Nonprofit</span></label>
-              <label class="chip"><input type="checkbox" name="careers" value="Entrepreneurship" /><span>Entrepreneurship</span></label>
+            <p class="panel-note" id="career-note">What careers should your mentor work in? Check all that apply, or add your own.</p>
+            <div class="chip-row" id="career-list"></div>
+            <div class="add-row" data-add-to="career-list" data-add-name="careers">
+              <input class="field" type="text" placeholder="Add your own career..." aria-label="Add your own career" maxlength="50" />
+              <button type="button" class="pill-btn">Add</button>
             </div>
           </fieldset>
 
-          <!-- 4. Career goals (check any + add your own) -->
+          <!-- 2. Help with (check any + add your own) -->
           <fieldset class="panel span-2">
             <legend class="panel-title">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -577,9 +488,9 @@
                 <circle cx="12" cy="12" r="5"></circle>
                 <circle cx="12" cy="12" r="1.2"></circle>
               </svg>
-              Career Goals
+              What Should Your Mentor Help With?
             </legend>
-            <p class="panel-note">What do you want help with? Pick any, or add your own.</p>
+            <p class="panel-note">Pick the goals you'd like a mentor to help you reach, or add your own.</p>
             <div class="chip-row" id="goal-list">
               <label class="chip"><input type="checkbox" name="goals" value="Land an internship" /><span>Land an internship</span></label>
               <label class="chip"><input type="checkbox" name="goals" value="Get my first full-time job" /><span>Get my first full-time job</span></label>
@@ -597,15 +508,15 @@
             </div>
           </fieldset>
 
-          <!-- 5. Hobbies (check any + add your own) -->
+          <!-- 3. Hobbies (check any + add your own) -->
           <fieldset class="panel span-2">
             <legend class="panel-title">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polygon points="12 3 14.7 8.6 20.8 9.4 16.4 13.6 17.5 19.7 12 16.8 6.5 19.7 7.6 13.6 3.2 9.4 9.3 8.6"></polygon>
               </svg>
-              Hobbies
+              Mentor's Hobbies
             </legend>
-            <p class="panel-note">What do you like to do for fun? Pick any, or add your own.</p>
+            <p class="panel-note">Want a mentor who shares your interests? Pick any hobbies, or add your own.</p>
             <div class="chip-row" id="hobby-list">
               <label class="chip"><input type="checkbox" name="hobbies" value="Sports" /><span>Sports</span></label>
               <label class="chip"><input type="checkbox" name="hobbies" value="Fitness" /><span>Fitness</span></label>
@@ -628,8 +539,29 @@
             </div>
           </fieldset>
 
-          <!-- 6. Mentorship commitment (low vs high) -->
-          <fieldset class="panel span-2">
+          <!-- 4. Meeting frequency (pick one) -->
+          <fieldset class="panel">
+            <legend class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3.5" y="5" width="17" height="15.5" rx="2"></rect>
+                <line x1="3.5" y1="10" x2="20.5" y2="10"></line>
+                <line x1="8" y1="3" x2="8" y2="7"></line>
+                <line x1="16" y1="3" x2="16" y2="7"></line>
+              </svg>
+              Meeting Frequency
+            </legend>
+            <p class="panel-note">How often would you like your mentor to meet with you?</p>
+            <div class="chip-row">
+              <label class="chip"><input type="radio" name="frequency" value="Weekly" /><span>Weekly</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="Every two weeks" /><span>Every two weeks</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="Monthly" /><span>Monthly</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="Once a semester" /><span>Once a semester</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="As needed" /><span>As needed</span></label>
+            </div>
+          </fieldset>
+
+          <!-- 5. Mentorship commitment (low vs high) -->
+          <fieldset class="panel">
             <legend class="panel-title">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 21s-7.5-4.6-9.3-9.4C1.4 8 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.9 1.3-1.8 2.9-2.9 4.9-2.9 3.5 0 5.7 3.5 4.4 7.1C19.5 16.4 12 21 12 21z"></path>
@@ -662,15 +594,6 @@
           </div>
         </form>
 
-        <!-- Shown after submitting -->
-        <section class="panel summary" id="summary" hidden aria-live="polite">
-          <p class="confirm-msg">&#10003; Thanks! We'll use your answers to suggest future mentors for a coffee chat.</p>
-          <dl id="summary-list"></dl>
-          <div class="btn-row">
-            <button type="button" class="pill-btn outline" id="edit-answers">Edit Answers</button>
-            <a href="home_student.html" class="pill-btn">Back to Home</a>
-          </div>
-        </section>
       </div>
     </main>
 
@@ -686,7 +609,7 @@
       </a>
 
       <!-- Coffee Chat (this page) -->
-      <a href="coffee_chat.html" class="nav-item" aria-label="Coffee Chats" aria-current="page">
+      <a href="coffee_filtered_page.html" class="nav-item" aria-label="Coffee Chats" aria-current="page">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
           <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
@@ -718,13 +641,57 @@
   </div>
 
   <script>
+    // =====================================================================
+    // CAREERS BY MAJOR (step 2 shows the list for the major picked in step 1)
+    // Mentors on mentor_swipe.html should use these same career names.
+    // =====================================================================
+    const GENERAL_CAREERS = [
+      "Software Engineering", "Data Science", "Cybersecurity", "Product Management",
+      "UX/UI Design", "Digital Marketing", "Financial Analysis", "Management Consulting",
+      "Healthcare", "Research & Academia", "Teaching", "Law", "Nonprofit Management", "Entrepreneurship"
+    ];
+
+    const CAREERS_BY_MAJOR = {
+      "Accounting": ["Public Accounting (CPA)", "Tax Accounting", "Auditing", "Forensic Accounting", "Corporate Finance", "Financial Planning", "Management Consulting"],
+      "Biology": ["Medicine / Pre-Med", "Biotech Research", "Genetic Counseling", "Environmental Science", "Public Health", "Pharmaceutical Sales", "Lab Research"],
+      "Business Administration": ["Management Consulting", "Operations Management", "Human Resources", "Sales", "Project Management", "Supply Chain", "Entrepreneurship"],
+      "Chemistry": ["Pharmaceutical Research", "Chemical Engineering", "Forensic Science", "Quality Control", "Materials Science", "Environmental Chemistry"],
+      "Communications": ["Public Relations", "Journalism", "Social Media Management", "Corporate Communications", "Content Strategy", "Broadcasting"],
+      "Computer Science": ["Software Engineering", "Web Development", "Mobile Development", "Data Science", "Machine Learning / AI", "Cybersecurity", "Game Development", "Cloud / DevOps"],
+      "Criminal Justice": ["Law Enforcement", "Forensic Investigation", "Corrections", "Law / Paralegal", "Victim Advocacy", "Federal Agencies"],
+      "Economics": ["Financial Analysis", "Economic Research", "Policy Analysis", "Management Consulting", "Investment Banking", "Data Analytics"],
+      "Education": ["Elementary Teaching", "Secondary Teaching", "Special Education", "School Counseling", "Educational Administration", "Curriculum Design"],
+      "Electrical Engineering": ["Power Systems", "Embedded Systems", "Electronics Design", "Telecommunications", "Robotics", "Renewable Energy"],
+      "English": ["Publishing", "Technical Writing", "Copywriting", "Editing", "Teaching", "Content Marketing"],
+      "Finance": ["Investment Banking", "Financial Planning", "Corporate Finance", "Commercial Banking", "Risk Management", "Wealth Management"],
+      "Graphic Design": ["UX/UI Design", "Branding & Identity", "Illustration", "Motion Graphics", "Web Design", "Art Direction"],
+      "History": ["Museums & Archives", "Teaching", "Law", "Public History", "Research & Academia", "Government"],
+      "Information Systems": ["IT Support", "Systems Analysis", "Database Administration", "Cybersecurity", "Business Intelligence", "IT Project Management"],
+      "Marketing": ["Digital Marketing", "Brand Management", "Market Research", "Social Media Marketing", "Advertising", "Product Marketing"],
+      "Mathematics": ["Actuarial Science", "Data Science", "Data Analytics", "Quantitative Finance", "Statistics", "Teaching", "Operations Research"],
+      "Mechanical Engineering": ["Automotive Engineering", "Aerospace Engineering", "Manufacturing", "Robotics", "HVAC & Energy", "Product Design"],
+      "Nursing": ["Emergency Nursing", "Pediatric Nursing", "Nurse Practitioner", "Travel Nursing", "Public Health Nursing", "Nursing Education"],
+      "Political Science": ["Law", "Government & Policy", "Political Campaigns", "Nonprofit Advocacy", "International Relations", "Lobbying"],
+      "Psychology": ["Clinical Psychology", "Counseling", "School Psychology", "UX Research", "Human Resources", "Social Work"],
+      "Sociology": ["Social Work", "Nonprofit Management", "Community Organizing", "Public Policy", "Market Research", "Human Resources"]
+      // Undeclared / Other -> GENERAL_CAREERS
+    };
+
     const STORE_KEY = "demma-coffee-chat-prefs";
     const form = document.getElementById("survey");
     const errorMsg = document.getElementById("error-msg");
-    const summary = document.getElementById("summary");
+    const saved = load() || {};
+
+    // No major yet? Go back to step 1.
+    if (!saved.major) location.replace("coffee_filtered_page.html");
+
+    const major = saved.major || "";
+    const careerOptions = CAREERS_BY_MAJOR[major] || GENERAL_CAREERS;
+    const isGeneral = !CAREERS_BY_MAJOR[major];
+    document.getElementById("major-name").textContent = isGeneral ? "you" : major + " majors";
 
     // Which chip list each "add your own" box adds to
-    const CUSTOM_LISTS = { goals: "goal-list", hobbies: "hobby-list" };
+    const CUSTOM_LISTS = { careers: "career-list", goals: "goal-list", hobbies: "hobby-list" };
 
     // ----- Add your own goal / hobby (appears as a checked chip) -----
     function addChip(name, text, checked) {
@@ -746,6 +713,9 @@
       return [...document.getElementById(CUSTOM_LISTS[name]).querySelectorAll("input")]
         .find(i => i.value.toLowerCase() === text.toLowerCase());
     }
+
+    // Career chips for this major
+    careerOptions.forEach(c => addChip("careers", c, false));
 
     document.querySelectorAll(".add-row").forEach(row => {
       const name = row.dataset.addName;
@@ -769,7 +739,7 @@
     function readAnswers() {
       const data = new FormData(form);
       return {
-        major: data.get("major") || "",
+        major: major, // from step 1
         careers: data.getAll("careers"),
         goals: data.getAll("goals"),
         hobbies: data.getAll("hobbies"),
@@ -779,7 +749,6 @@
     }
 
     function fillAnswers(a) {
-      form.major.value = a.major || "";
       Object.keys(CUSTOM_LISTS).forEach(name => {
         (a[name] || []).forEach(text => {
           if (!hasChip(name, text)) addChip(name, text, false);
@@ -799,37 +768,12 @@
       try { return JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { return null; }
     }
 
-    // ----- Summary after submitting -----
-    function showSummary(a) {
-      const rows = [
-        ["Major", a.major],
-        ["Careers", a.careers.join(", ")],
-        ["Goals", a.goals.join(", ")],
-        ["Hobbies", a.hobbies.join(", ") || "None picked"],
-        ["Meeting frequency", a.frequency],
-        ["Commitment", a.commitment]
-      ];
-      const list = document.getElementById("summary-list");
-      list.innerHTML = "";
-      rows.forEach(([k, v]) => {
-        const dt = document.createElement("dt");
-        dt.textContent = k;
-        const dd = document.createElement("dd");
-        dd.textContent = v;
-        list.append(dt, dd);
-      });
-      form.hidden = true;
-      summary.hidden = false;
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
     form.addEventListener("submit", e => {
       e.preventDefault();
       const a = readAnswers();
       const missing = [];
-      if (!a.major) missing.push("your major");
       if (!a.careers.length) missing.push("at least one career");
-      if (!a.goals.length) missing.push("at least one goal");
+      if (!a.goals.length) missing.push("at least one thing to help with");
       if (!a.frequency) missing.push("a meeting frequency");
       if (!a.commitment) missing.push("a commitment level");
       if (missing.length) {
@@ -839,18 +783,12 @@
       }
       errorMsg.hidden = true;
       save(a);
-      showSummary(a);
-    });
-
-    document.getElementById("edit-answers").addEventListener("click", () => {
-      summary.hidden = true;
-      form.hidden = false;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // Go see the mentors that match these answers
+      location.href = "mentor_swipe.html";
     });
 
     // Bring back answers from last time
-    const saved = load();
-    if (saved) fillAnswers(saved);
+    fillAnswers(saved);
   </script>
 </body>
 </html>

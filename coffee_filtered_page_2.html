@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demma Coffee Chat Step 2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #2b2b2b;
+    }
+
+    .app-container {
+      width: 100%;
+      min-height: 100vh; /* grows with the cards so the whole page scrolls */
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Black Header Bar (same as home) */
+    .top-bar {
+      padding: 16px 40px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: "Sora", sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    /* Title on top, cards in a gray band below (same as mentorship pages) */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .left-side {
+      display: flex;
+      justify-content: center;
+      padding: 32px 40px 24px;
+    }
+
+    .right-side {
+      flex: 1;
+      padding: 28px 40px 110px; /* bottom room for the nav */
+      background-color: #f4f4f4;
+    }
+
+    .intro {
+      max-width: 760px;
+      text-align: center;
+    }
+
+    .intro-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: "Sora", sans-serif;
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #555555;
+    }
+
+    /* Survey cards: two columns, one on phones */
+    .survey {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      align-items: stretch; /* cards in the same row match heights */
+    }
+
+    .panel {
+      padding: 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+    }
+
+    /* fieldset reset so it looks like the other panels */
+    fieldset.panel {
+      min-width: 0;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    legend.panel-title {
+      float: left;
+      width: 100%;
+    }
+
+    legend.panel-title + * {
+      clear: both;
+    }
+
+    .panel-title .icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .panel-note {
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: #555555;
+    }
+
+    /* Form fields (same as mentorship pages) */
+    .field {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #2b2b2b;
+      background-color: #ffffff;
+    }
+
+    .field:focus {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    select.field {
+      appearance: none;
+      cursor: pointer;
+      padding-right: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232b2b2b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+    }
+
+    /* Pill choices (checkboxes and radios) */
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      position: relative;
+    }
+
+    .chip input,
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .chip span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      background-color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .chip span:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Checkmark appears on selected checkbox chips */
+    .chip input[type="checkbox"] + span::before {
+      content: "+";
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .chip input[type="checkbox"]:checked + span::before {
+      content: "\2713";
+    }
+
+    .chip input:checked + span,
+    .option input:checked + .option-box {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .chip input:focus-visible + span,
+    .option input:focus-visible + .option-box {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    /* Add your own goal */
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .add-row .field {
+      flex: 1;
+    }
+
+    /* Big option cards (commitment level) */
+    .option-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .option {
+      position: relative;
+      display: flex;
+    }
+
+    .option-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 16px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 14px;
+      background-color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .option-box:hover {
+      background-color: #f1f1f1;
+    }
+
+    .option-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .option-desc {
+      font-size: 13px;
+      color: #555555;
+    }
+
+    .option input:checked + .option-box .option-desc {
+      color: #d6d6d6;
+    }
+
+    /* Wide card spans both columns */
+    .span-2 {
+      grid-column: 1 / -1;
+    }
+
+    /* Submit row */
+    .submit-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding-top: 8px;
+    }
+
+    .pill-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      background-color: #3b3b3b;
+    }
+
+    .pill-btn:focus-visible {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    .pill-btn.outline {
+      border: 1.5px solid #2b2b2b;
+      background-color: #ffffff;
+      color: #2b2b2b;
+    }
+
+    .pill-btn.outline:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Big rounded button (same as get_started.html) */
+    .continue-btn {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      padding: 16px;
+      border: none;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .continue-btn:hover {
+      background-color: #3b3b3b;
+    }
+
+    .error-msg {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background-color: #f1f1f1;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .error-msg[hidden] {
+      display: none;
+    }
+
+
+    /* Step label above the title */
+    .step-label {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 12px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 14px;
+      color: #2b2b2b;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* Bottom Navigation (same floating pill as home) */
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: calc(100% - 40px);
+      max-width: 480px;
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 10;
+      border: 2px solid #2b2b2b;
+      border-radius: 999px;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 0 18px;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .nav-item + .nav-item {
+      border-left: 1.5px solid #2b2b2b;
+    }
+
+    .nav-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .nav-item[aria-current="page"] {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    /* On phones: one column */
+    @media (max-width: 700px) {
+      .top-bar,
+      .left-side,
+      .right-side {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .survey,
+      .option-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Black Header Bar -->
+    <header class="top-bar">Demma</header>
+
+    <main class="content">
+      <!-- Top: title -->
+      <div class="left-side">
+        <div class="intro">
+          <svg class="intro-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
+            <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
+            <path d="M14.5 11h.8a1.4 1.4 0 0 1 0 2.8h-.8"></path>
+            <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
+            <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
+          </svg>
+          <span class="step-label">Step 2 of 2</span>
+          <h1>What Are You Looking for in a Mentor?</h1>
+          <p class="subtitle">These careers are picked for <strong id="major-name">your major</strong>. Choose what you want in a mentor and we'll find your matches.</p>
+          <a href="coffee_filtered_page.html" class="back-link">&larr; Change my major</a>
+        </div>
+      </div>
+
+      <!-- Bottom: survey cards -->
+      <div class="right-side">
+        <form class="survey" id="survey" novalidate>
+          <!-- 1. Mentor's career (list depends on the major from step 1) -->
+          <fieldset class="panel span-2">
+            <legend class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="7" width="18" height="13" rx="2"></rect>
+                <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path>
+                <line x1="3" y1="13" x2="21" y2="13"></line>
+              </svg>
+              Mentor's Career
+            </legend>
+            <p class="panel-note" id="career-note">What careers should your mentor work in? Check all that apply, or add your own.</p>
+            <div class="chip-row" id="career-list"></div>
+            <div class="add-row" data-add-to="career-list" data-add-name="careers">
+              <input class="field" type="text" placeholder="Add your own career..." aria-label="Add your own career" maxlength="50" />
+              <button type="button" class="pill-btn">Add</button>
+            </div>
+          </fieldset>
+
+          <!-- 2. Help with (check any + add your own) -->
+          <fieldset class="panel span-2">
+            <legend class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <circle cx="12" cy="12" r="5"></circle>
+                <circle cx="12" cy="12" r="1.2"></circle>
+              </svg>
+              What Should Your Mentor Help With?
+            </legend>
+            <p class="panel-note">Pick the goals you'd like a mentor to help you reach, or add your own.</p>
+            <div class="chip-row" id="goal-list">
+              <label class="chip"><input type="checkbox" name="goals" value="Land an internship" /><span>Land an internship</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Get my first full-time job" /><span>Get my first full-time job</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Prepare for interviews" /><span>Prepare for interviews</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Improve my resume" /><span>Improve my resume</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Build a portfolio" /><span>Build a portfolio</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Grow my network" /><span>Grow my network</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Explore grad school" /><span>Explore grad school</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Switch career paths" /><span>Switch career paths</span></label>
+              <label class="chip"><input type="checkbox" name="goals" value="Start a business" /><span>Start a business</span></label>
+            </div>
+            <div class="add-row" data-add-to="goal-list" data-add-name="goals">
+              <input class="field" type="text" placeholder="Add your own goal..." aria-label="Add your own career goal" maxlength="60" />
+              <button type="button" class="pill-btn">Add</button>
+            </div>
+          </fieldset>
+
+          <!-- 3. Hobbies (check any + add your own) -->
+          <fieldset class="panel span-2">
+            <legend class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="12 3 14.7 8.6 20.8 9.4 16.4 13.6 17.5 19.7 12 16.8 6.5 19.7 7.6 13.6 3.2 9.4 9.3 8.6"></polygon>
+              </svg>
+              Mentor's Hobbies
+            </legend>
+            <p class="panel-note">Want a mentor who shares your interests? Pick any hobbies, or add your own.</p>
+            <div class="chip-row" id="hobby-list">
+              <label class="chip"><input type="checkbox" name="hobbies" value="Sports" /><span>Sports</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Fitness" /><span>Fitness</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Gaming" /><span>Gaming</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Music" /><span>Music</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Reading" /><span>Reading</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Art &amp; Drawing" /><span>Art &amp; Drawing</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Photography" /><span>Photography</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Cooking &amp; Baking" /><span>Cooking &amp; Baking</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Travel" /><span>Travel</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Hiking &amp; Outdoors" /><span>Hiking &amp; Outdoors</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Movies &amp; TV" /><span>Movies &amp; TV</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Volunteering" /><span>Volunteering</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Coding side projects" /><span>Coding side projects</span></label>
+              <label class="chip"><input type="checkbox" name="hobbies" value="Dancing" /><span>Dancing</span></label>
+            </div>
+            <div class="add-row" data-add-to="hobby-list" data-add-name="hobbies">
+              <input class="field" type="text" placeholder="Add your own hobby..." aria-label="Add your own hobby" maxlength="40" />
+              <button type="button" class="pill-btn">Add</button>
+            </div>
+          </fieldset>
+
+          <!-- 4. Meeting frequency (pick one) -->
+          <fieldset class="panel">
+            <legend class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3.5" y="5" width="17" height="15.5" rx="2"></rect>
+                <line x1="3.5" y1="10" x2="20.5" y2="10"></line>
+                <line x1="8" y1="3" x2="8" y2="7"></line>
+                <line x1="16" y1="3" x2="16" y2="7"></line>
+              </svg>
+              Meeting Frequency
+            </legend>
+            <p class="panel-note">How often would you like your mentor to meet with you?</p>
+            <div class="chip-row">
+              <label class="chip"><input type="radio" name="frequency" value="Weekly" /><span>Weekly</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="Every two weeks" /><span>Every two weeks</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="Monthly" /><span>Monthly</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="Once a semester" /><span>Once a semester</span></label>
+              <label class="chip"><input type="radio" name="frequency" value="As needed" /><span>As needed</span></label>
+            </div>
+          </fieldset>
+
+          <!-- 5. Mentorship commitment (low vs high) -->
+          <fieldset class="panel">
+            <legend class="panel-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 21s-7.5-4.6-9.3-9.4C1.4 8 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.9 1.3-1.8 2.9-2.9 4.9-2.9 3.5 0 5.7 3.5 4.4 7.1C19.5 16.4 12 21 12 21z"></path>
+              </svg>
+              Mentorship Commitment
+            </legend>
+            <p class="panel-note">How involved would you like your mentor to be?</p>
+            <div class="option-row">
+              <label class="option">
+                <input type="radio" name="commitment" value="Low maintenance" />
+                <span class="option-box">
+                  <span class="option-name">Low Maintenance</span>
+                  <span class="option-desc">Quick check-ins and answers to questions when you need them.</span>
+                </span>
+              </label>
+              <label class="option">
+                <input type="radio" name="commitment" value="High maintenance" />
+                <span class="option-box">
+                  <span class="option-name">High Maintenance</span>
+                  <span class="option-desc">Regular meetings, feedback on your work, and hands-on guidance.</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- Submit -->
+          <div class="submit-row span-2">
+            <p class="error-msg" id="error-msg" role="alert" hidden></p>
+            <button type="submit" class="continue-btn">Find My Matches</button>
+          </div>
+        </form>
+
+      </div>
+    </main>
+
+    <!-- Bottom Tab Navigation -->
+    <nav class="bottom-nav" aria-label="Primary Navigation">
+      <!-- Home -->
+      <a href="home_student.html" class="nav-item" aria-label="Home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5"></path>
+          <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"></path>
+          <path d="M10 20v-6h4v6"></path>
+        </svg>
+      </a>
+
+      <!-- Coffee Chat (this page) -->
+      <a href="coffee_filtered_page.html" class="nav-item" aria-label="Coffee Chats" aria-current="page">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
+          <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
+          <path d="M14.5 11h.8a1.4 1.4 0 0 1 0 2.8h-.8"></path>
+          <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
+          <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
+        </svg>
+      </a>
+
+      <!-- Posts -->
+      <a href="post.html" class="nav-item" aria-label="Posts">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+          <line x1="8" y1="8" x2="16" y2="8"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+          <line x1="8" y1="16" x2="13" y2="16"></line>
+        </svg>
+      </a>
+
+      <!-- Profile -->
+      <a href="#" class="nav-item" aria-label="Profile">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9.5"></circle>
+          <circle cx="12" cy="9.5" r="2.8"></circle>
+          <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
+        </svg>
+      </a>
+    </nav>
+  </div>
+
+  <script>
+    // =====================================================================
+    // CAREERS BY MAJOR (step 2 shows the list for the major picked in step 1)
+    // Mentors on mentor_swipe.html should use these same career names.
+    // =====================================================================
+    const GENERAL_CAREERS = [
+      "Software Engineering", "Data Science", "Cybersecurity", "Product Management",
+      "UX/UI Design", "Digital Marketing", "Financial Analysis", "Management Consulting",
+      "Healthcare", "Research & Academia", "Teaching", "Law", "Nonprofit Management", "Entrepreneurship"
+    ];
+
+    const CAREERS_BY_MAJOR = {
+      "Accounting": ["Public Accounting (CPA)", "Tax Accounting", "Auditing", "Forensic Accounting", "Corporate Finance", "Financial Planning", "Management Consulting"],
+      "Biology": ["Medicine / Pre-Med", "Biotech Research", "Genetic Counseling", "Environmental Science", "Public Health", "Pharmaceutical Sales", "Lab Research"],
+      "Business Administration": ["Management Consulting", "Operations Management", "Human Resources", "Sales", "Project Management", "Supply Chain", "Entrepreneurship"],
+      "Chemistry": ["Pharmaceutical Research", "Chemical Engineering", "Forensic Science", "Quality Control", "Materials Science", "Environmental Chemistry"],
+      "Communications": ["Public Relations", "Journalism", "Social Media Management", "Corporate Communications", "Content Strategy", "Broadcasting"],
+      "Computer Science": ["Software Engineering", "Web Development", "Mobile Development", "Data Science", "Machine Learning / AI", "Cybersecurity", "Game Development", "Cloud / DevOps"],
+      "Criminal Justice": ["Law Enforcement", "Forensic Investigation", "Corrections", "Law / Paralegal", "Victim Advocacy", "Federal Agencies"],
+      "Economics": ["Financial Analysis", "Economic Research", "Policy Analysis", "Management Consulting", "Investment Banking", "Data Analytics"],
+      "Education": ["Elementary Teaching", "Secondary Teaching", "Special Education", "School Counseling", "Educational Administration", "Curriculum Design"],
+      "Electrical Engineering": ["Power Systems", "Embedded Systems", "Electronics Design", "Telecommunications", "Robotics", "Renewable Energy"],
+      "English": ["Publishing", "Technical Writing", "Copywriting", "Editing", "Teaching", "Content Marketing"],
+      "Finance": ["Investment Banking", "Financial Planning", "Corporate Finance", "Commercial Banking", "Risk Management", "Wealth Management"],
+      "Graphic Design": ["UX/UI Design", "Branding & Identity", "Illustration", "Motion Graphics", "Web Design", "Art Direction"],
+      "History": ["Museums & Archives", "Teaching", "Law", "Public History", "Research & Academia", "Government"],
+      "Information Systems": ["IT Support", "Systems Analysis", "Database Administration", "Cybersecurity", "Business Intelligence", "IT Project Management"],
+      "Marketing": ["Digital Marketing", "Brand Management", "Market Research", "Social Media Marketing", "Advertising", "Product Marketing"],
+      "Mathematics": ["Actuarial Science", "Data Science", "Data Analytics", "Quantitative Finance", "Statistics", "Teaching", "Operations Research"],
+      "Mechanical Engineering": ["Automotive Engineering", "Aerospace Engineering", "Manufacturing", "Robotics", "HVAC & Energy", "Product Design"],
+      "Nursing": ["Emergency Nursing", "Pediatric Nursing", "Nurse Practitioner", "Travel Nursing", "Public Health Nursing", "Nursing Education"],
+      "Political Science": ["Law", "Government & Policy", "Political Campaigns", "Nonprofit Advocacy", "International Relations", "Lobbying"],
+      "Psychology": ["Clinical Psychology", "Counseling", "School Psychology", "UX Research", "Human Resources", "Social Work"],
+      "Sociology": ["Social Work", "Nonprofit Management", "Community Organizing", "Public Policy", "Market Research", "Human Resources"]
+      // Undeclared / Other -> GENERAL_CAREERS
+    };
+
+    const STORE_KEY = "demma-coffee-chat-prefs";
+    const form = document.getElementById("survey");
+    const errorMsg = document.getElementById("error-msg");
+    const saved = load() || {};
+
+    // No major yet? Go back to step 1.
+    if (!saved.major) location.replace("coffee_filtered_page.html");
+
+    const major = saved.major || "";
+    const careerOptions = CAREERS_BY_MAJOR[major] || GENERAL_CAREERS;
+    const isGeneral = !CAREERS_BY_MAJOR[major];
+    document.getElementById("major-name").textContent = isGeneral ? "you" : major + " majors";
+
+    // Which chip list each "add your own" box adds to
+    const CUSTOM_LISTS = { careers: "career-list", goals: "goal-list", hobbies: "hobby-list" };
+
+    // ----- Add your own goal / hobby (appears as a checked chip) -----
+    function addChip(name, text, checked) {
+      const list = document.getElementById(CUSTOM_LISTS[name]);
+      const label = document.createElement("label");
+      label.className = "chip";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = name;
+      input.value = text;
+      input.checked = checked;
+      const span = document.createElement("span");
+      span.textContent = text;
+      label.append(input, span);
+      list.append(label);
+    }
+
+    function hasChip(name, text) {
+      return [...document.getElementById(CUSTOM_LISTS[name]).querySelectorAll("input")]
+        .find(i => i.value.toLowerCase() === text.toLowerCase());
+    }
+
+    // Career chips for this major
+    careerOptions.forEach(c => addChip("careers", c, false));
+
+    document.querySelectorAll(".add-row").forEach(row => {
+      const name = row.dataset.addName;
+      const box = row.querySelector("input");
+      const add = () => {
+        const text = box.value.trim();
+        if (!text) return;
+        const existing = hasChip(name, text);
+        if (existing) existing.checked = true;
+        else addChip(name, text, true);
+        box.value = "";
+        box.focus();
+      };
+      row.querySelector("button").addEventListener("click", add);
+      box.addEventListener("keydown", e => {
+        if (e.key === "Enter") { e.preventDefault(); add(); }
+      });
+    });
+
+    // ----- Read / fill the form -----
+    function readAnswers() {
+      const data = new FormData(form);
+      return {
+        major: major, // from step 1
+        careers: data.getAll("careers"),
+        goals: data.getAll("goals"),
+        hobbies: data.getAll("hobbies"),
+        frequency: data.get("frequency") || "",
+        commitment: data.get("commitment") || ""
+      };
+    }
+
+    function fillAnswers(a) {
+      Object.keys(CUSTOM_LISTS).forEach(name => {
+        (a[name] || []).forEach(text => {
+          if (!hasChip(name, text)) addChip(name, text, false);
+        });
+      });
+      form.querySelectorAll("input[type=checkbox], input[type=radio]").forEach(i => {
+        const val = a[i.name];
+        i.checked = Array.isArray(val) ? val.includes(i.value) : val === i.value;
+      });
+    }
+
+    function save(a) {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(a)); } catch (e) { /* not saved, still works */ }
+    }
+
+    function load() {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { return null; }
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const a = readAnswers();
+      const missing = [];
+      if (!a.careers.length) missing.push("at least one career");
+      if (!a.goals.length) missing.push("at least one thing to help with");
+      if (!a.frequency) missing.push("a meeting frequency");
+      if (!a.commitment) missing.push("a commitment level");
+      if (missing.length) {
+        errorMsg.textContent = "Please choose " + missing.join(", ") + ".";
+        errorMsg.hidden = false;
+        return;
+      }
+      errorMsg.hidden = true;
+      save(a);
+      // Go see the mentors that match these answers
+      location.href = "mentor_swipe.html";
+    });
+
+    // Bring back answers from last time
+    fillAnswers(saved);
+  </script>
+</body>
+</html>

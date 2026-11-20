@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demma Mentor Matches</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #2b2b2b;
+    }
+
+    .app-container {
+      width: 100%;
+      min-height: 100vh; /* grows with the content so the whole page scrolls */
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Black Header Bar (same as home) */
+    .top-bar {
+      padding: 16px 40px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: "Sora", sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    /* Title on top, gray band below (same as mentorship pages) */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .left-side {
+      display: flex;
+      justify-content: center;
+      padding: 32px 40px 24px;
+    }
+
+    .right-side {
+      flex: 1;
+      padding: 28px 40px 110px; /* bottom room for the nav */
+      background-color: #f4f4f4;
+    }
+
+    .intro {
+      max-width: 760px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: "Sora", sans-serif;
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #555555;
+    }
+
+    .subtitle a {
+      color: #2b2b2b;
+      font-weight: 700;
+    }
+
+    /* Deck on the left, coffee chat list on the right */
+    .layout {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .deck-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .notice {
+      width: 100%;
+      max-width: 420px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background-color: #ffffff;
+      border: 1.5px dashed #8a8a8a;
+      font-size: 13px;
+      text-align: center;
+      color: #555555;
+    }
+
+    .notice[hidden] {
+      display: none;
+    }
+
+    .notice a {
+      color: #2b2b2b;
+      font-weight: 700;
+    }
+
+    /* ----- Card stack ----- */
+    .deck {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      height: 540px;
+    }
+
+    .profile-card {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 22px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+      overflow: hidden;
+      user-select: none;
+      touch-action: pan-y; /* lets the page still scroll up/down on phones */
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .profile-card.top {
+      cursor: grab;
+      z-index: 2;
+    }
+
+    .profile-card.top.dragging {
+      cursor: grabbing;
+      transition: none;
+    }
+
+    .profile-card.behind {
+      z-index: 1;
+      transform: translateY(12px) scale(0.95);
+      pointer-events: none;
+    }
+
+    .profile-card:focus-visible {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 4px;
+    }
+
+    /* "COFFEE CHAT" / "PASS" stamps that fade in while dragging */
+    .stamp {
+      position: absolute;
+      top: 22px;
+      padding: 6px 12px;
+      border: 2.5px solid #2b2b2b;
+      border-radius: 10px;
+      background-color: #ffffff;
+      font-family: "Sora", sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .stamp.yes {
+      left: 22px;
+      transform: rotate(-12deg);
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .stamp.no {
+      right: 22px;
+      transform: rotate(12deg);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+    }
+
+    .card-name {
+      font-family: "Sora", sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .card-role {
+      font-size: 14px;
+      color: #555555;
+    }
+
+    /* Company + years worked there */
+    .card-company {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-company svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .match-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card-bio {
+      margin-bottom: 14px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .card-body {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-section h3 {
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #8a8a8a;
+    }
+
+    .facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      font-size: 13px;
+    }
+
+    .facts strong {
+      font-weight: 700;
+    }
+
+    /* Tags: dark when it matches your filters */
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 11px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.match {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .tag.match::before {
+      content: "\2713  ";
+    }
+
+    /* Empty deck */
+    .deck-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 24px;
+      border: 1.5px dashed #8a8a8a;
+      border-radius: 18px;
+      background-color: #ffffff;
+      text-align: center;
+    }
+
+    .deck-empty h2 {
+      font-family: "Sora", sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .deck-empty p {
+      font-size: 14px;
+      color: #555555;
+    }
+
+    /* ----- X / Undo / Check buttons ----- */
+    .swipe-controls {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .round-btn {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 50%;
+      background-color: #ffffff;
+      color: #2b2b2b;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .round-btn:hover {
+      background-color: #f1f1f1;
+    }
+
+    .round-btn.yes {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .round-btn.yes:hover {
+      background-color: #3b3b3b;
+    }
+
+    .round-btn.small {
+      width: 44px;
+      height: 44px;
+    }
+
+    .round-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .round-btn.small svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .round-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .round-btn:focus-visible,
+    .pill-btn:focus-visible,
+    .remove-btn:focus-visible {
+      outline: 3px solid #8a8a8a;
+      outline-offset: 2px;
+    }
+
+    .hint {
+      font-size: 13px;
+      color: #8a8a8a;
+      text-align: center;
+    }
+
+    /* ----- Coffee chat list panel ----- */
+    .panel {
+      padding: 18px;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 18px;
+      background-color: #ffffff;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .panel-title .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .panel-note {
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #555555;
+    }
+
+    .chat-list {
+      list-style: none;
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1.5px solid #e0e0e0;
+    }
+
+    .chat-item .avatar {
+      width: 32px;
+      height: 32px;
+    }
+
+    .chat-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .chat-role {
+      font-size: 12px;
+      color: #555555;
+    }
+
+    .remove-btn {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #2b2b2b;
+      border-radius: 50%;
+      background-color: #ffffff;
+      color: #2b2b2b;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background-color: #f1f1f1;
+    }
+
+    .remove-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .chat-empty {
+      padding: 10px 0 4px;
+      border-top: 1.5px solid #e0e0e0;
+      font-size: 13px;
+      color: #8a8a8a;
+    }
+
+    .panel-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 999px;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      background-color: #3b3b3b;
+    }
+
+    .pill-btn.outline {
+      border: 1.5px solid #2b2b2b;
+      background-color: #ffffff;
+      color: #2b2b2b;
+    }
+
+    .pill-btn.outline:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Bottom Navigation (same floating pill as home) */
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: calc(100% - 40px);
+      max-width: 480px;
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 10;
+      border: 2px solid #2b2b2b;
+      border-radius: 999px;
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 0 18px;
+      color: #2b2b2b;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .nav-item + .nav-item {
+      border-left: 1.5px solid #2b2b2b;
+    }
+
+    .nav-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .nav-item[aria-current="page"] {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    /* Tablets and phones: list goes under the deck */
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        max-width: 420px;
+        width: 100%;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .top-bar,
+      .left-side,
+      .right-side {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .deck {
+        height: 500px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Black Header Bar -->
+    <header class="top-bar">Demma</header>
+
+    <main class="content">
+      <!-- Top: title -->
+      <div class="left-side">
+        <div class="intro">
+          <h1>Your Mentor Matches</h1>
+          <p class="subtitle">Swipe right to add a mentor to your coffee chat list, or left to pass. <a href="coffee_filtered_page_2.html">Edit your filters</a></p>
+        </div>
+      </div>
+
+      <!-- Bottom: deck + coffee chat list -->
+      <div class="right-side">
+        <div class="layout">
+          <section class="deck-area" aria-label="Mentor cards">
+            <p class="notice" id="notice" hidden></p>
+
+            <div class="deck" id="deck"></div>
+
+            <div class="swipe-controls">
+              <button type="button" class="round-btn" id="btn-pass" aria-label="Pass on this mentor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                </svg>
+              </button>
+              <button type="button" class="round-btn small" id="btn-undo" aria-label="Undo last swipe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 14L4 9l5-5"></path>
+                  <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path>
+                </svg>
+              </button>
+              <button type="button" class="round-btn yes" id="btn-chat" aria-label="Add this mentor to your coffee chat list">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="5 12.5 10 17.5 19 7"></polyline>
+                </svg>
+              </button>
+            </div>
+            <p class="hint">Drag the card, tap the buttons, or use the &larr; &rarr; arrow keys.</p>
+          </section>
+
+          <!-- Coffee chat list -->
+          <aside class="panel" aria-labelledby="chat-title">
+            <h2 class="panel-title" id="chat-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
+                <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
+                <path d="M14.5 11h.8a1.4 1.4 0 0 1 0 2.8h-.8"></path>
+                <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
+                <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
+              </svg>
+              Your Coffee Chat List
+            </h2>
+            <p class="panel-note">Mentors you swiped right on. We'll let them know you'd like to chat.</p>
+            <ul class="chat-list" id="chat-list"></ul>
+            <div class="panel-actions">
+              <button type="button" class="pill-btn outline" id="start-over">Start Over</button>
+              <a href="home_student.html" class="pill-btn">Back to Home</a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Tab Navigation -->
+    <nav class="bottom-nav" aria-label="Primary Navigation">
+      <!-- Home -->
+      <a href="home_student.html" class="nav-item" aria-label="Home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5"></path>
+          <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"></path>
+          <path d="M10 20v-6h4v6"></path>
+        </svg>
+      </a>
+
+      <!-- Coffee Chat (this section) -->
+      <a href="coffee_filtered_page.html" class="nav-item" aria-label="Coffee Chats" aria-current="page">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20.5l1.4-5.1A8.5 8.5 0 1 1 21 11.5z"></path>
+          <path d="M8.5 10.5h6v2.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5z"></path>
+          <path d="M14.5 11h.8a1.4 1.4 0 0 1 0 2.8h-.8"></path>
+          <line x1="10.3" y1="7.2" x2="10.3" y2="8.6"></line>
+          <line x1="12.7" y1="7.2" x2="12.7" y2="8.6"></line>
+        </svg>
+      </a>
+
+      <!-- Posts -->
+      <a href="post.html" class="nav-item" aria-label="Posts">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+          <line x1="8" y1="8" x2="16" y2="8"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+          <line x1="8" y1="16" x2="13" y2="16"></line>
+        </svg>
+      </a>
+
+      <!-- Profile -->
+      <a href="#" class="nav-item" aria-label="Profile">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9.5"></circle>
+          <circle cx="12" cy="9.5" r="2.8"></circle>
+          <path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path>
+        </svg>
+      </a>
+    </nav>
+  </div>
+
+  <script>
+    // =====================================================================
+    // MENTORS (placeholder info: fill in real mentors here)
+    // Use the SAME wording as the options on the coffee chat filter pages so
+    // they match the student's filters:
+    //   company     -> where the mentor works (placeholder names are made up)
+    //   years       -> how many years they've worked there
+    //   major       -> one of the majors on coffee_filtered_page.html (step 1);
+    //                  counts as a match when it's the same as the student's
+    //   careers     -> career names from CAREERS_BY_MAJOR on coffee_filtered_page_2.html
+    //   goals       -> Career Goals this mentor can help with
+    //   hobbies     -> any of the Hobbies (or your own)
+    //   frequency   -> Weekly | Every two weeks | Monthly | Once a semester | As needed
+    //   commitment  -> Low maintenance | High maintenance
+    // =====================================================================
+    const MENTORS = [
+      {
+        id: "ricky", name: "Ricky", role: "Software Engineer", year: "Class of 2020",
+        company: "Brightline Software", years: 6,
+        major: "Computer Science",
+        bio: "Builds web apps for a living and loves helping students get ready for their first tech interviews.",
+        careers: ["Software Engineering", "Web Development", "Cloud / DevOps"],
+        goals: ["Land an internship", "Prepare for interviews", "Build a portfolio"],
+        hobbies: ["Gaming", "Hiking & Outdoors", "Coding side projects"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "maya", name: "Maya T.", role: "Marketing Manager", year: "Class of 2019",
+        company: "Northstar Brands", years: 7,
+        major: "Marketing",
+        bio: "Leads brand campaigns and enjoys showing students how to turn class projects into portfolio pieces.",
+        careers: ["Digital Marketing", "Brand Management", "Social Media Marketing"],
+        goals: ["Build a portfolio", "Grow my network", "Improve my resume"],
+        hobbies: ["Photography", "Travel", "Cooking & Baking"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "jordan", name: "Jordan P.", role: "Data Analyst", year: "Class of 2021",
+        company: "Summit Analytics", years: 5,
+        major: "Mathematics",
+        bio: "Turns messy spreadsheets into clear answers. Happy to talk about breaking into data roles.",
+        careers: ["Data Analytics", "Data Science", "Financial Analysis"],
+        goals: ["Get my first full-time job", "Prepare for interviews", "Switch career paths"],
+        hobbies: ["Sports", "Music", "Gaming"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "priya", name: "Priya S.", role: "UX Designer", year: "Class of 2018",
+        company: "Studio Marigold", years: 8,
+        major: "Graphic Design",
+        bio: "Designs apps people actually enjoy using. Loves giving feedback on design portfolios.",
+        careers: ["UX/UI Design", "Branding & Identity", "UX Research"],
+        goals: ["Build a portfolio", "Land an internship", "Grow my network"],
+        hobbies: ["Art & Drawing", "Reading", "Travel"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "marcus", name: "Marcus L.", role: "Nurse Practitioner", year: "Class of 2016",
+        company: "Riverside Health Clinic", years: 10,
+        major: "Nursing",
+        bio: "Works in a busy clinic and mentors students thinking about healthcare or grad school.",
+        careers: ["Nurse Practitioner", "Public Health Nursing", "Nursing Education"],
+        goals: ["Explore grad school", "Get my first full-time job"],
+        hobbies: ["Fitness", "Volunteering", "Cooking & Baking"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "elena", name: "Elena R.", role: "Management Consultant", year: "Class of 2017",
+        company: "Clearpath Consulting", years: 9,
+        major: "Economics",
+        bio: "Helps companies solve big problems. Can walk you through case interviews step by step.",
+        careers: ["Management Consulting", "Policy Analysis", "Investment Banking"],
+        goals: ["Prepare for interviews", "Improve my resume", "Grow my network"],
+        hobbies: ["Reading", "Dancing", "Travel"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "devon", name: "Devon W.", role: "Startup Founder", year: "Class of 2015",
+        company: "Founders Workshop", years: 11,
+        major: "Business Administration",
+        bio: "Started a small business right after graduating. Loves talking ideas, pitches, and first customers.",
+        careers: ["Entrepreneurship", "Sales", "Product Marketing"],
+        goals: ["Start a business", "Switch career paths", "Grow my network"],
+        hobbies: ["Music", "Sports", "Movies & TV"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "sofia", name: "Sofia M.", role: "High School Teacher", year: "Class of 2019",
+        company: "Oak Hill School District", years: 7,
+        major: "Education",
+        bio: "Teaches history and helps students figure out teaching certificates and grad programs.",
+        careers: ["Secondary Teaching", "Curriculum Design", "Teaching"],
+        goals: ["Explore grad school", "Get my first full-time job"],
+        hobbies: ["Reading", "Volunteering", "Hiking & Outdoors"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      // ----- More placeholder mentors: at least one for every career on step 2 -----
+      {
+        id: "aaliyahb", name: "Aaliyah B.", role: "CPA", year: "Class of 2010",
+        company: "Ledgerly CPAs", years: 16,
+        major: "Accounting",
+        bio: "Works in Public Accounting (CPA) and enjoys helping students plan their first steps.",
+        careers: ["Public Accounting (CPA)", "Tax Accounting", "Auditing"],
+        goals: ["Land an internship", "Improve my resume", "Explore grad school"],
+        hobbies: ["Sports", "Art & Drawing", "Movies & TV"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "benh", name: "Ben H.", role: "Forensic Accountant", year: "Class of 2013",
+        company: "Granite Audit Partners", years: 12,
+        major: "Accounting",
+        bio: "Has spent years in Forensic Accounting. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Forensic Accounting", "Corporate Finance", "Financial Planning"],
+        goals: ["Prepare for interviews", "Grow my network", "Start a business"],
+        hobbies: ["Music", "Travel", "Dancing"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "camilaf", name: "Camila F.", role: "Physician", year: "Class of 2016",
+        company: "GreenLeaf Biotech", years: 10,
+        major: "Biology",
+        bio: "Started out as a Biology major and now works in Medicine / Pre-Med. Loves giving honest career advice.",
+        careers: ["Medicine / Pre-Med", "Biotech Research", "Genetic Counseling"],
+        goals: ["Build a portfolio", "Switch career paths", "Get my first full-time job"],
+        hobbies: ["Photography", "Volunteering", "Gaming"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "danielo", name: "Daniel O.", role: "Environmental Scientist", year: "Class of 2019",
+        company: "Valley Medical Center", years: 6,
+        major: "Biology",
+        bio: "Works in Environmental Science and enjoys helping students plan their first steps.",
+        careers: ["Environmental Science", "Public Health", "Pharmaceutical Sales", "Lab Research"],
+        goals: ["Explore grad school", "Land an internship", "Improve my resume"],
+        hobbies: ["Hiking & Outdoors", "Sports", "Art & Drawing"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      {
+        id: "esthern", name: "Esther N.", role: "Operations Manager", year: "Class of 2022",
+        company: "Pinewood Operations Co.", years: 3,
+        major: "Business Administration",
+        bio: "Has spent years in Operations Management. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Operations Management", "Human Resources", "Project Management", "Supply Chain"],
+        goals: ["Start a business", "Prepare for interviews", "Grow my network"],
+        hobbies: ["Coding side projects", "Music", "Travel"],
+        frequency: "As needed", commitment: "Low maintenance"
+      },
+      {
+        id: "felixa", name: "Felix A.", role: "Pharmaceutical Scientist", year: "Class of 2012",
+        company: "Helix Pharma", years: 14,
+        major: "Chemistry",
+        bio: "Started out as a Chemistry major and now works in Pharmaceutical Research. Loves giving honest career advice.",
+        careers: ["Pharmaceutical Research", "Chemical Engineering", "Forensic Science"],
+        goals: ["Get my first full-time job", "Build a portfolio", "Switch career paths"],
+        hobbies: ["Fitness", "Photography", "Volunteering"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "gracel", name: "Grace L.", role: "Quality Control Chemist", year: "Class of 2015",
+        company: "Crystal Labs", years: 10,
+        major: "Chemistry",
+        bio: "Works in Quality Control and enjoys helping students plan their first steps.",
+        careers: ["Quality Control", "Materials Science", "Environmental Chemistry"],
+        goals: ["Improve my resume", "Explore grad school", "Land an internship"],
+        hobbies: ["Reading", "Hiking & Outdoors", "Sports"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "hirot", name: "Hiro T.", role: "PR Specialist", year: "Class of 2018",
+        company: "Signal PR", years: 8,
+        major: "Communications",
+        bio: "Has spent years in Public Relations. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Public Relations", "Journalism", "Social Media Management"],
+        goals: ["Grow my network", "Start a business", "Prepare for interviews"],
+        hobbies: ["Cooking & Baking", "Coding side projects", "Music"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "isabelv", name: "Isabel V.", role: "Communications Director", year: "Class of 2021",
+        company: "Metro News Network", years: 4,
+        major: "Communications",
+        bio: "Started out as a Communications major and now works in Corporate Communications. Loves giving honest career advice.",
+        careers: ["Corporate Communications", "Content Strategy", "Broadcasting"],
+        goals: ["Switch career paths", "Get my first full-time job", "Build a portfolio"],
+        hobbies: ["Movies & TV", "Fitness", "Photography"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "jamalk", name: "Jamal K.", role: "Mobile Developer", year: "Class of 2011",
+        company: "Pixel Forge Games", years: 14,
+        major: "Computer Science",
+        bio: "Works in Mobile Development and enjoys helping students plan their first steps.",
+        careers: ["Mobile Development", "Machine Learning / AI", "Cybersecurity", "Game Development"],
+        goals: ["Land an internship", "Improve my resume", "Explore grad school"],
+        hobbies: ["Dancing", "Reading", "Hiking & Outdoors"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "kirad", name: "Kira D.", role: "Police Detective", year: "Class of 2014",
+        company: "Lakeside Police Department", years: 12,
+        major: "Criminal Justice",
+        bio: "Has spent years in Law Enforcement. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Law Enforcement", "Forensic Investigation", "Corrections"],
+        goals: ["Prepare for interviews", "Grow my network", "Start a business"],
+        hobbies: ["Gaming", "Cooking & Baking", "Coding side projects"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "leos", name: "Leo S.", role: "Paralegal", year: "Class of 2017",
+        company: "State Justice Center", years: 8,
+        major: "Criminal Justice",
+        bio: "Started out as a Criminal Justice major and now works in Law / Paralegal. Loves giving honest career advice.",
+        careers: ["Law / Paralegal", "Victim Advocacy", "Federal Agencies"],
+        goals: ["Build a portfolio", "Switch career paths", "Get my first full-time job"],
+        hobbies: ["Art & Drawing", "Movies & TV", "Fitness"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "meiw", name: "Mei W.", role: "Economist", year: "Class of 2020",
+        company: "Harbor Economics Group", years: 5,
+        major: "Economics",
+        bio: "Works in Economic Research and enjoys helping students plan their first steps.",
+        careers: ["Economic Research"],
+        goals: ["Explore grad school", "Land an internship", "Improve my resume"],
+        hobbies: ["Travel", "Dancing", "Reading"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "nater", name: "Nate R.", role: "Elementary School Teacher", year: "Class of 2010",
+        company: "Maple Grove Elementary", years: 15,
+        major: "Education",
+        bio: "Has spent years in Elementary Teaching. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Elementary Teaching", "Special Education", "School Counseling", "Educational Administration"],
+        goals: ["Start a business", "Prepare for interviews", "Grow my network"],
+        hobbies: ["Volunteering", "Gaming", "Cooking & Baking"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      {
+        id: "oliviaj", name: "Olivia J.", role: "Power Systems Engineer", year: "Class of 2013",
+        company: "Voltline Energy", years: 13,
+        major: "Electrical Engineering",
+        bio: "Started out as a Electrical Engineering major and now works in Power Systems. Loves giving honest career advice.",
+        careers: ["Power Systems", "Embedded Systems", "Electronics Design"],
+        goals: ["Get my first full-time job", "Build a portfolio", "Switch career paths"],
+        hobbies: ["Sports", "Art & Drawing", "Movies & TV"],
+        frequency: "As needed", commitment: "Low maintenance"
+      },
+      {
+        id: "pedrog", name: "Pedro G.", role: "Telecom Engineer", year: "Class of 2016",
+        company: "Circuitworks", years: 9,
+        major: "Electrical Engineering",
+        bio: "Works in Telecommunications and enjoys helping students plan their first steps.",
+        careers: ["Telecommunications", "Robotics", "Renewable Energy"],
+        goals: ["Improve my resume", "Explore grad school", "Land an internship"],
+        hobbies: ["Music", "Travel", "Dancing"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "quinne", name: "Quinn E.", role: "Book Editor", year: "Class of 2019",
+        company: "Paper Lantern Press", years: 7,
+        major: "English",
+        bio: "Has spent years in Publishing. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Publishing", "Technical Writing", "Copywriting"],
+        goals: ["Grow my network", "Start a business", "Prepare for interviews"],
+        hobbies: ["Photography", "Volunteering", "Gaming"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "rosam", name: "Rosa M.", role: "Editor", year: "Class of 2022",
+        company: "Wordsmith Agency", years: 3,
+        major: "English",
+        bio: "Started out as a English major and now works in Editing. Loves giving honest career advice.",
+        careers: ["Editing", "Content Marketing"],
+        goals: ["Switch career paths", "Get my first full-time job", "Build a portfolio"],
+        hobbies: ["Hiking & Outdoors", "Sports", "Art & Drawing"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "samirp", name: "Samir P.", role: "Commercial Banker", year: "Class of 2012",
+        company: "Bluewater Bank", years: 14,
+        major: "Finance",
+        bio: "Works in Commercial Banking and enjoys helping students plan their first steps.",
+        careers: ["Commercial Banking", "Risk Management", "Wealth Management"],
+        goals: ["Land an internship", "Improve my resume", "Explore grad school"],
+        hobbies: ["Coding side projects", "Music", "Travel"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "tessac", name: "Tessa C.", role: "Illustrator", year: "Class of 2015",
+        company: "Inkwell Creative", years: 10,
+        major: "Graphic Design",
+        bio: "Has spent years in Illustration. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Illustration", "Motion Graphics", "Web Design", "Art Direction"],
+        goals: ["Prepare for interviews", "Grow my network", "Start a business"],
+        hobbies: ["Fitness", "Photography", "Volunteering"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "umai", name: "Uma I.", role: "Museum Curator", year: "Class of 2018",
+        company: "City History Museum", years: 8,
+        major: "History",
+        bio: "Started out as a History major and now works in Museums & Archives. Loves giving honest career advice.",
+        careers: ["Museums & Archives", "Law", "Public History"],
+        goals: ["Build a portfolio", "Switch career paths", "Get my first full-time job"],
+        hobbies: ["Reading", "Hiking & Outdoors", "Sports"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "victorz", name: "Victor Z.", role: "Professor", year: "Class of 2021",
+        company: "Heritage Law Group", years: 4,
+        major: "History",
+        bio: "Works in Research & Academia and enjoys helping students plan their first steps.",
+        careers: ["Research & Academia", "Government"],
+        goals: ["Explore grad school", "Land an internship", "Improve my resume"],
+        hobbies: ["Cooking & Baking", "Coding side projects", "Music"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "wendyy", name: "Wendy Y.", role: "IT Support Lead", year: "Class of 2011",
+        company: "DataBridge IT", years: 15,
+        major: "Information Systems",
+        bio: "Has spent years in IT Support. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["IT Support", "Systems Analysis", "Database Administration"],
+        goals: ["Start a business", "Prepare for interviews", "Grow my network"],
+        hobbies: ["Movies & TV", "Fitness", "Photography"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "xavierq", name: "Xavier Q.", role: "BI Analyst", year: "Class of 2014",
+        company: "Netwise Solutions", years: 11,
+        major: "Information Systems",
+        bio: "Started out as a Information Systems major and now works in Business Intelligence. Loves giving honest career advice.",
+        careers: ["Business Intelligence", "IT Project Management"],
+        goals: ["Get my first full-time job", "Build a portfolio", "Switch career paths"],
+        hobbies: ["Dancing", "Reading", "Hiking & Outdoors"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      {
+        id: "yarah", name: "Yara H.", role: "Market Researcher", year: "Class of 2017",
+        company: "Bold Echo Media", years: 8,
+        major: "Marketing",
+        bio: "Works in Market Research and enjoys helping students plan their first steps.",
+        careers: ["Market Research", "Advertising"],
+        goals: ["Improve my resume", "Explore grad school", "Land an internship"],
+        hobbies: ["Gaming", "Cooking & Baking", "Coding side projects"],
+        frequency: "As needed", commitment: "Low maintenance"
+      },
+      {
+        id: "zaneb", name: "Zane B.", role: "Actuary", year: "Class of 2020",
+        company: "Keystone Actuarial", years: 5,
+        major: "Mathematics",
+        bio: "Has spent years in Actuarial Science. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Actuarial Science", "Quantitative Finance", "Statistics", "Operations Research"],
+        goals: ["Grow my network", "Start a business", "Prepare for interviews"],
+        hobbies: ["Art & Drawing", "Movies & TV", "Fitness"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "amarao", name: "Amara O.", role: "Automotive Engineer", year: "Class of 2010",
+        company: "Torque Motors", years: 16,
+        major: "Mechanical Engineering",
+        bio: "Started out as a Mechanical Engineering major and now works in Automotive Engineering. Loves giving honest career advice.",
+        careers: ["Automotive Engineering", "Aerospace Engineering", "Manufacturing"],
+        goals: ["Switch career paths", "Get my first full-time job", "Build a portfolio"],
+        hobbies: ["Travel", "Dancing", "Reading"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "brooket", name: "Brooke T.", role: "Energy Engineer", year: "Class of 2013",
+        company: "SkyArc Aerospace", years: 12,
+        major: "Mechanical Engineering",
+        bio: "Works in HVAC & Energy and enjoys helping students plan their first steps.",
+        careers: ["HVAC & Energy", "Product Design"],
+        goals: ["Land an internship", "Improve my resume", "Explore grad school"],
+        hobbies: ["Volunteering", "Gaming", "Cooking & Baking"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "carlosn", name: "Carlos N.", role: "ER Nurse", year: "Class of 2016",
+        company: "Lakeview Children's Hospital", years: 9,
+        major: "Nursing",
+        bio: "Has spent years in Emergency Nursing. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Emergency Nursing", "Pediatric Nursing", "Travel Nursing"],
+        goals: ["Prepare for interviews", "Grow my network", "Start a business"],
+        hobbies: ["Sports", "Art & Drawing", "Movies & TV"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "danaf", name: "Dana F.", role: "Policy Advisor", year: "Class of 2019",
+        company: "Capitol Policy Institute", years: 7,
+        major: "Political Science",
+        bio: "Started out as a Political Science major and now works in Government & Policy. Loves giving honest career advice.",
+        careers: ["Government & Policy", "Political Campaigns", "Nonprofit Advocacy"],
+        goals: ["Build a portfolio", "Switch career paths", "Get my first full-time job"],
+        hobbies: ["Music", "Travel", "Dancing"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "eliw", name: "Eli W.", role: "Foreign Affairs Analyst", year: "Class of 2022",
+        company: "Civic Voice Alliance", years: 3,
+        major: "Political Science",
+        bio: "Works in International Relations and enjoys helping students plan their first steps.",
+        careers: ["International Relations", "Lobbying"],
+        goals: ["Explore grad school", "Land an internship", "Improve my resume"],
+        hobbies: ["Photography", "Volunteering", "Gaming"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "fatimar", name: "Fatima R.", role: "Clinical Psychologist", year: "Class of 2012",
+        company: "Mindful Path Counseling", years: 14,
+        major: "Psychology",
+        bio: "Has spent years in Clinical Psychology. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Clinical Psychology", "Counseling", "School Psychology", "Social Work"],
+        goals: ["Start a business", "Prepare for interviews", "Grow my network"],
+        hobbies: ["Hiking & Outdoors", "Sports", "Art & Drawing"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "gabel", name: "Gabe L.", role: "Nonprofit Director", year: "Class of 2015",
+        company: "Community Bridges Nonprofit", years: 11,
+        major: "Sociology",
+        bio: "Started out as a Sociology major and now works in Nonprofit Management. Loves giving honest career advice.",
+        careers: ["Nonprofit Management", "Community Organizing", "Public Policy"],
+        goals: ["Get my first full-time job", "Build a portfolio", "Switch career paths"],
+        hobbies: ["Coding side projects", "Music", "Travel"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "hanas", name: "Hana S.", role: "Product Manager", year: "Class of 2018",
+        company: "Meridian Group", years: 6,
+        major: "Business Administration",
+        bio: "Works in Product Management and enjoys helping students plan their first steps.",
+        careers: ["Product Management", "Healthcare"],
+        goals: ["Improve my resume", "Explore grad school", "Land an internship"],
+        hobbies: ["Fitness", "Photography", "Volunteering"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      // ----- Second mentor for every career (so each career has 2 cards) -----
+      {
+        id: "adriana", name: "Adrian A.", role: "Tax Accountant", year: "Class of 2009",
+        company: "Ledgerly CPAs", years: 17,
+        major: "Accounting",
+        bio: "Has spent years in Tax Accounting. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Tax Accounting", "Auditing", "Forensic Accounting"],
+        goals: ["Get my first full-time job", "Improve my resume", "Grow my network"],
+        hobbies: ["Gaming", "Photography", "Movies & TV"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "biancah", name: "Bianca H.", role: "Corporate Finance Manager", year: "Class of 2014",
+        company: "Granite Audit Partners", years: 11,
+        major: "Accounting",
+        bio: "Started out as a Accounting major and now works in Corporate Finance. Loves giving honest career advice.",
+        careers: ["Corporate Finance", "Financial Planning", "Management Consulting", "Public Accounting (CPA)"],
+        goals: ["Grow my network", "Switch career paths", "Land an internship"],
+        hobbies: ["Cooking & Baking", "Volunteering", "Fitness"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "calebp", name: "Caleb P.", role: "Biotech Researcher", year: "Class of 2019",
+        company: "Evergreen Environmental", years: 5,
+        major: "Biology",
+        bio: "Works in Biotech Research and enjoys helping students plan their first steps.",
+        careers: ["Biotech Research", "Genetic Counseling", "Environmental Science"],
+        goals: ["Land an internship", "Prepare for interviews", "Build a portfolio"],
+        hobbies: ["Coding side projects", "Gaming", "Photography"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "deliaa", name: "Delia A.", role: "Public Health Specialist", year: "Class of 2010",
+        company: "GreenLeaf Biotech", years: 16,
+        major: "Biology",
+        bio: "Has spent years in Public Health. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Public Health", "Pharmaceutical Sales", "Lab Research", "Medicine / Pre-Med"],
+        goals: ["Build a portfolio", "Explore grad school", "Start a business"],
+        hobbies: ["Music", "Cooking & Baking", "Volunteering"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "emekah", name: "Emeka H.", role: "HR Manager", year: "Class of 2015",
+        company: "Founders Workshop", years: 10,
+        major: "Business Administration",
+        bio: "Started out as a Business Administration major and now works in Human Resources. Loves giving honest career advice.",
+        careers: ["Human Resources", "Sales", "Project Management"],
+        goals: ["Start a business", "Get my first full-time job", "Improve my resume"],
+        hobbies: ["Travel", "Coding side projects", "Gaming"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "fionap", name: "Fiona P.", role: "Supply Chain Analyst", year: "Class of 2020",
+        company: "Pinewood Operations Co.", years: 4,
+        major: "Business Administration",
+        bio: "Works in Supply Chain and enjoys helping students plan their first steps.",
+        careers: ["Supply Chain", "Entrepreneurship", "Operations Management"],
+        goals: ["Improve my resume", "Grow my network", "Switch career paths"],
+        hobbies: ["Dancing", "Music", "Cooking & Baking"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "gavina", name: "Gavin A.", role: "Chemical Engineer", year: "Class of 2011",
+        company: "Helix Pharma", years: 15,
+        major: "Chemistry",
+        bio: "Has spent years in Chemical Engineering. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Chemical Engineering", "Forensic Science", "Quality Control"],
+        goals: ["Switch career paths", "Land an internship", "Prepare for interviews"],
+        hobbies: ["Reading", "Travel", "Coding side projects"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      {
+        id: "haileyh", name: "Hailey H.", role: "Materials Scientist", year: "Class of 2016",
+        company: "Crystal Labs", years: 9,
+        major: "Chemistry",
+        bio: "Started out as a Chemistry major and now works in Materials Science. Loves giving honest career advice.",
+        careers: ["Materials Science", "Environmental Chemistry", "Pharmaceutical Research"],
+        goals: ["Prepare for interviews", "Build a portfolio", "Explore grad school"],
+        hobbies: ["Hiking & Outdoors", "Dancing", "Music"],
+        frequency: "As needed", commitment: "Low maintenance"
+      },
+      {
+        id: "imanip", name: "Imani P.", role: "Journalist", year: "Class of 2021",
+        company: "Signal PR", years: 3,
+        major: "Communications",
+        bio: "Works in Journalism and enjoys helping students plan their first steps.",
+        careers: ["Journalism", "Social Media Management", "Corporate Communications"],
+        goals: ["Explore grad school", "Start a business", "Get my first full-time job"],
+        hobbies: ["Sports", "Reading", "Travel"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "jonaha", name: "Jonah A.", role: "Content Strategist", year: "Class of 2012",
+        company: "Metro News Network", years: 14,
+        major: "Communications",
+        bio: "Has spent years in Content Strategy. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Content Strategy", "Broadcasting", "Public Relations"],
+        goals: ["Get my first full-time job", "Improve my resume", "Grow my network"],
+        hobbies: ["Art & Drawing", "Hiking & Outdoors", "Dancing"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "keikoh", name: "Keiko H.", role: "Web Developer", year: "Class of 2017",
+        company: "CloudNest Labs", years: 8,
+        major: "Computer Science",
+        bio: "Started out as a Computer Science major and now works in Web Development. Loves giving honest career advice.",
+        careers: ["Web Development", "Mobile Development", "Data Science"],
+        goals: ["Grow my network", "Switch career paths", "Land an internship"],
+        hobbies: ["Movies & TV", "Sports", "Reading"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "luisp", name: "Luis P.", role: "Machine Learning Engineer", year: "Class of 2022",
+        company: "Ironclad Security", years: 2,
+        major: "Computer Science",
+        bio: "Works in Machine Learning / AI and enjoys helping students plan their first steps.",
+        careers: ["Machine Learning / AI", "Cybersecurity", "Game Development"],
+        goals: ["Land an internship", "Prepare for interviews", "Build a portfolio"],
+        hobbies: ["Fitness", "Art & Drawing", "Hiking & Outdoors"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "marena", name: "Maren A.", role: "DevOps Engineer", year: "Class of 2013",
+        company: "Brightline Software", years: 13,
+        major: "Computer Science",
+        bio: "Has spent years in Cloud / DevOps. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Cloud / DevOps", "Software Engineering"],
+        goals: ["Build a portfolio", "Explore grad school", "Start a business"],
+        hobbies: ["Photography", "Movies & TV", "Sports"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "nikhilh", name: "Nikhil H.", role: "Crime Scene Investigator", year: "Class of 2018",
+        company: "Lakeside Police Department", years: 7,
+        major: "Criminal Justice",
+        bio: "Started out as a Criminal Justice major and now works in Forensic Investigation. Loves giving honest career advice.",
+        careers: ["Forensic Investigation", "Corrections", "Law / Paralegal"],
+        goals: ["Start a business", "Get my first full-time job", "Improve my resume"],
+        hobbies: ["Volunteering", "Fitness", "Art & Drawing"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "opalp", name: "Opal P.", role: "Victim Advocate", year: "Class of 2009",
+        company: "State Justice Center", years: 15,
+        major: "Criminal Justice",
+        bio: "Works in Victim Advocacy and enjoys helping students plan their first steps.",
+        careers: ["Victim Advocacy", "Federal Agencies", "Law Enforcement"],
+        goals: ["Improve my resume", "Grow my network", "Switch career paths"],
+        hobbies: ["Gaming", "Photography", "Movies & TV"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "pabloa", name: "Pablo A.", role: "Economist", year: "Class of 2014",
+        company: "Clearpath Consulting", years: 12,
+        major: "Economics",
+        bio: "Has spent years in Economic Research. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Economic Research", "Policy Analysis", "Investment Banking"],
+        goals: ["Switch career paths", "Land an internship", "Prepare for interviews"],
+        hobbies: ["Cooking & Baking", "Volunteering", "Fitness"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "rainah", name: "Raina H.", role: "Data Analyst", year: "Class of 2019",
+        company: "Harbor Economics Group", years: 6,
+        major: "Economics",
+        bio: "Started out as a Economics major and now works in Data Analytics. Loves giving honest career advice.",
+        careers: ["Data Analytics", "Financial Analysis"],
+        goals: ["Prepare for interviews", "Build a portfolio", "Explore grad school"],
+        hobbies: ["Coding side projects", "Gaming", "Photography"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      {
+        id: "simonep", name: "Simone P.", role: "High School Teacher", year: "Class of 2010",
+        company: "Oak Hill School District", years: 14,
+        major: "Education",
+        bio: "Works in Secondary Teaching and enjoys helping students plan their first steps.",
+        careers: ["Secondary Teaching", "Special Education", "School Counseling"],
+        goals: ["Explore grad school", "Start a business", "Get my first full-time job"],
+        hobbies: ["Music", "Cooking & Baking", "Volunteering"],
+        frequency: "As needed", commitment: "Low maintenance"
+      },
+      {
+        id: "theoa", name: "Theo A.", role: "School Principal", year: "Class of 2015",
+        company: "Maple Grove Elementary", years: 11,
+        major: "Education",
+        bio: "Has spent years in Educational Administration. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Educational Administration", "Curriculum Design", "Elementary Teaching"],
+        goals: ["Get my first full-time job", "Improve my resume", "Grow my network"],
+        hobbies: ["Travel", "Coding side projects", "Gaming"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "ursulah", name: "Ursula H.", role: "Embedded Systems Engineer", year: "Class of 2020",
+        company: "Voltline Energy", years: 5,
+        major: "Electrical Engineering",
+        bio: "Started out as a Electrical Engineering major and now works in Embedded Systems. Loves giving honest career advice.",
+        careers: ["Embedded Systems", "Electronics Design", "Telecommunications"],
+        goals: ["Grow my network", "Switch career paths", "Land an internship"],
+        hobbies: ["Dancing", "Music", "Cooking & Baking"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "vikramp", name: "Vikram P.", role: "Robotics Engineer", year: "Class of 2011",
+        company: "Circuitworks", years: 13,
+        major: "Electrical Engineering",
+        bio: "Works in Robotics and enjoys helping students plan their first steps.",
+        careers: ["Robotics", "Renewable Energy", "Power Systems"],
+        goals: ["Land an internship", "Prepare for interviews", "Build a portfolio"],
+        hobbies: ["Reading", "Travel", "Coding side projects"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "willaa", name: "Willa A.", role: "Technical Writer", year: "Class of 2016",
+        company: "Paper Lantern Press", years: 10,
+        major: "English",
+        bio: "Has spent years in Technical Writing. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Technical Writing", "Copywriting", "Editing"],
+        goals: ["Build a portfolio", "Explore grad school", "Start a business"],
+        hobbies: ["Hiking & Outdoors", "Dancing", "Music"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "yusufh", name: "Yusuf H.", role: "Teacher", year: "Class of 2021",
+        company: "Wordsmith Agency", years: 4,
+        major: "English",
+        bio: "Started out as a English major and now works in Teaching. Loves giving honest career advice.",
+        careers: ["Teaching", "Content Marketing", "Publishing"],
+        goals: ["Start a business", "Get my first full-time job", "Improve my resume"],
+        hobbies: ["Sports", "Reading", "Travel"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "zoep", name: "Zoe P.", role: "Risk Analyst", year: "Class of 2012",
+        company: "Cedar Wealth Advisors", years: 12,
+        major: "Finance",
+        bio: "Works in Risk Management and enjoys helping students plan their first steps.",
+        careers: ["Risk Management", "Wealth Management", "Commercial Banking"],
+        goals: ["Improve my resume", "Grow my network", "Switch career paths"],
+        hobbies: ["Art & Drawing", "Hiking & Outdoors", "Dancing"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "andrea", name: "Andre A.", role: "Brand Designer", year: "Class of 2017",
+        company: "Studio Marigold", years: 9,
+        major: "Graphic Design",
+        bio: "Has spent years in Branding & Identity. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Branding & Identity", "Illustration", "Motion Graphics"],
+        goals: ["Switch career paths", "Land an internship", "Prepare for interviews"],
+        hobbies: ["Movies & TV", "Sports", "Reading"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "bellah", name: "Bella H.", role: "Web Designer", year: "Class of 2022",
+        company: "Inkwell Creative", years: 3,
+        major: "Graphic Design",
+        bio: "Started out as a Graphic Design major and now works in Web Design. Loves giving honest career advice.",
+        careers: ["Web Design", "Art Direction", "UX/UI Design"],
+        goals: ["Prepare for interviews", "Build a portfolio", "Explore grad school"],
+        hobbies: ["Fitness", "Art & Drawing", "Hiking & Outdoors"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "cyrusp", name: "Cyrus P.", role: "Attorney", year: "Class of 2013",
+        company: "City History Museum", years: 11,
+        major: "History",
+        bio: "Works in Law and enjoys helping students plan their first steps.",
+        careers: ["Law", "Public History", "Research & Academia"],
+        goals: ["Explore grad school", "Start a business", "Get my first full-time job"],
+        hobbies: ["Photography", "Movies & TV", "Sports"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      {
+        id: "daphnea", name: "Daphne A.", role: "Government Analyst", year: "Class of 2018",
+        company: "Heritage Law Group", years: 8,
+        major: "History",
+        bio: "Has spent years in Government. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Government", "Museums & Archives"],
+        goals: ["Get my first full-time job", "Improve my resume", "Grow my network"],
+        hobbies: ["Volunteering", "Fitness", "Art & Drawing"],
+        frequency: "As needed", commitment: "Low maintenance"
+      },
+      {
+        id: "ezrah", name: "Ezra H.", role: "Systems Analyst", year: "Class of 2009",
+        company: "DataBridge IT", years: 16,
+        major: "Information Systems",
+        bio: "Started out as a Information Systems major and now works in Systems Analysis. Loves giving honest career advice.",
+        careers: ["Systems Analysis", "Database Administration", "Business Intelligence"],
+        goals: ["Grow my network", "Switch career paths", "Land an internship"],
+        hobbies: ["Gaming", "Photography", "Movies & TV"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "freyap", name: "Freya P.", role: "IT Project Manager", year: "Class of 2014",
+        company: "Netwise Solutions", years: 10,
+        major: "Information Systems",
+        bio: "Works in IT Project Management and enjoys helping students plan their first steps.",
+        careers: ["IT Project Management", "IT Support"],
+        goals: ["Land an internship", "Prepare for interviews", "Build a portfolio"],
+        hobbies: ["Cooking & Baking", "Volunteering", "Fitness"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "gideona", name: "Gideon A.", role: "Brand Manager", year: "Class of 2019",
+        company: "Northstar Brands", years: 7,
+        major: "Marketing",
+        bio: "Has spent years in Brand Management. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Brand Management", "Market Research", "Social Media Marketing"],
+        goals: ["Build a portfolio", "Explore grad school", "Start a business"],
+        hobbies: ["Coding side projects", "Gaming", "Photography"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "harperh", name: "Harper H.", role: "Advertising Manager", year: "Class of 2010",
+        company: "Bold Echo Media", years: 15,
+        major: "Marketing",
+        bio: "Started out as a Marketing major and now works in Advertising. Loves giving honest career advice.",
+        careers: ["Advertising", "Product Marketing", "Digital Marketing"],
+        goals: ["Start a business", "Get my first full-time job", "Improve my resume"],
+        hobbies: ["Music", "Cooking & Baking", "Volunteering"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "irisp", name: "Iris P.", role: "Quant Analyst", year: "Class of 2015",
+        company: "Summit Analytics", years: 9,
+        major: "Mathematics",
+        bio: "Works in Quantitative Finance and enjoys helping students plan their first steps.",
+        careers: ["Quantitative Finance", "Statistics", "Operations Research", "Actuarial Science"],
+        goals: ["Improve my resume", "Grow my network", "Switch career paths"],
+        hobbies: ["Travel", "Coding side projects", "Gaming"],
+        frequency: "As needed", commitment: "High maintenance"
+      },
+      {
+        id: "jaspera", name: "Jasper A.", role: "Aerospace Engineer", year: "Class of 2020",
+        company: "Torque Motors", years: 6,
+        major: "Mechanical Engineering",
+        bio: "Has spent years in Aerospace Engineering. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Aerospace Engineering", "Manufacturing", "HVAC & Energy"],
+        goals: ["Switch career paths", "Land an internship", "Prepare for interviews"],
+        hobbies: ["Dancing", "Music", "Cooking & Baking"],
+        frequency: "Weekly", commitment: "Low maintenance"
+      },
+      {
+        id: "kalanih", name: "Kalani H.", role: "Product Design Engineer", year: "Class of 2011",
+        company: "SkyArc Aerospace", years: 14,
+        major: "Mechanical Engineering",
+        bio: "Started out as a Mechanical Engineering major and now works in Product Design. Loves giving honest career advice.",
+        careers: ["Product Design", "Automotive Engineering"],
+        goals: ["Prepare for interviews", "Build a portfolio", "Explore grad school"],
+        hobbies: ["Reading", "Travel", "Coding side projects"],
+        frequency: "Every two weeks", commitment: "High maintenance"
+      },
+      {
+        id: "luciap", name: "Lucia P.", role: "Pediatric Nurse", year: "Class of 2016",
+        company: "Riverside Health Clinic", years: 8,
+        major: "Nursing",
+        bio: "Works in Pediatric Nursing and enjoys helping students plan their first steps.",
+        careers: ["Pediatric Nursing", "Nurse Practitioner", "Travel Nursing"],
+        goals: ["Explore grad school", "Start a business", "Get my first full-time job"],
+        hobbies: ["Hiking & Outdoors", "Dancing", "Music"],
+        frequency: "Monthly", commitment: "Low maintenance"
+      },
+      {
+        id: "mateoa", name: "Mateo A.", role: "Public Health Nurse", year: "Class of 2021",
+        company: "Lakeview Children's Hospital", years: 5,
+        major: "Nursing",
+        bio: "Has spent years in Public Health Nursing. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Public Health Nursing", "Nursing Education", "Emergency Nursing"],
+        goals: ["Get my first full-time job", "Improve my resume", "Grow my network"],
+        hobbies: ["Sports", "Reading", "Travel"],
+        frequency: "Once a semester", commitment: "High maintenance"
+      },
+      {
+        id: "naomih", name: "Naomi H.", role: "Campaign Manager", year: "Class of 2012",
+        company: "Capitol Policy Institute", years: 13,
+        major: "Political Science",
+        bio: "Started out as a Political Science major and now works in Political Campaigns. Loves giving honest career advice.",
+        careers: ["Political Campaigns", "Nonprofit Advocacy", "International Relations"],
+        goals: ["Grow my network", "Switch career paths", "Land an internship"],
+        hobbies: ["Art & Drawing", "Hiking & Outdoors", "Dancing"],
+        frequency: "As needed", commitment: "Low maintenance"
+      },
+      {
+        id: "oscarp", name: "Oscar P.", role: "Lobbyist", year: "Class of 2017",
+        company: "Civic Voice Alliance", years: 7,
+        major: "Political Science",
+        bio: "Works in Lobbying and enjoys helping students plan their first steps.",
+        careers: ["Lobbying", "Government & Policy"],
+        goals: ["Land an internship", "Prepare for interviews", "Build a portfolio"],
+        hobbies: ["Movies & TV", "Sports", "Reading"],
+        frequency: "Weekly", commitment: "High maintenance"
+      },
+      {
+        id: "priyankaa", name: "Priyanka A.", role: "Licensed Counselor", year: "Class of 2022",
+        company: "Bayside School District", years: 4,
+        major: "Psychology",
+        bio: "Has spent years in Counseling. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Counseling", "School Psychology", "UX Research"],
+        goals: ["Build a portfolio", "Explore grad school", "Start a business"],
+        hobbies: ["Fitness", "Art & Drawing", "Hiking & Outdoors"],
+        frequency: "Every two weeks", commitment: "Low maintenance"
+      },
+      {
+        id: "reggieh", name: "Reggie H.", role: "Social Worker", year: "Class of 2013",
+        company: "Mindful Path Counseling", years: 12,
+        major: "Psychology",
+        bio: "Started out as a Psychology major and now works in Social Work. Loves giving honest career advice.",
+        careers: ["Social Work", "Clinical Psychology"],
+        goals: ["Start a business", "Get my first full-time job", "Improve my resume"],
+        hobbies: ["Photography", "Movies & TV", "Sports"],
+        frequency: "Monthly", commitment: "High maintenance"
+      },
+      {
+        id: "sanap", name: "Sana P.", role: "Community Organizer", year: "Class of 2018",
+        company: "Hope Street Services", years: 6,
+        major: "Sociology",
+        bio: "Works in Community Organizing and enjoys helping students plan their first steps.",
+        careers: ["Community Organizing", "Public Policy", "Nonprofit Management"],
+        goals: ["Improve my resume", "Grow my network", "Switch career paths"],
+        hobbies: ["Volunteering", "Fitness", "Art & Drawing"],
+        frequency: "Once a semester", commitment: "Low maintenance"
+      },
+      {
+        id: "tobiasa", name: "Tobias A.", role: "Healthcare Administrator", year: "Class of 2009",
+        company: "Meridian Group", years: 17,
+        major: "Business Administration",
+        bio: "Has spent years in Healthcare. Happy to answer questions and share what the day-to-day is really like.",
+        careers: ["Healthcare", "Product Management"],
+        goals: ["Switch career paths", "Land an internship", "Prepare for interviews"],
+        hobbies: ["Gaming", "Photography", "Movies & TV"],
+        frequency: "As needed", commitment: "High maintenance"
+      }
+    ];
+
+    // ----- Saved data (shared with coffee_filtered_page.html) -----
+    const PREFS_KEY = "demma-coffee-chat-prefs";     // filters from the survey
+    const DECISIONS_KEY = "demma-coffee-chat-swipes"; // { mentorId: "chat" | "pass" }
+
+    function load(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+      catch (e) { return fallback; }
+    }
+
+    function store(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); }
+      catch (e) { /* storage blocked: page still works until reload */ }
+    }
+
+    const prefs = load(PREFS_KEY, null);
+    let decisions = load(DECISIONS_KEY, {});
+    let history = []; // swipes this visit, for Undo
+
+    // ----- Matching: what this mentor has in common with your filters -----
+    function overlap(a, b) {
+      const lower = (b || []).map(x => x.toLowerCase());
+      return (a || []).filter(x => lower.includes(x.toLowerCase()));
+    }
+
+    // Careers: a mentor shows up only if they have a career the student picked.
+    //  - Careers picked from the list must match the EXACT name (any capitalization),
+    //    e.g. "Social Media Management" only matches "Social Media Management".
+    //  - Careers the student typed in themselves match by KEYWORDS: every word they
+    //    typed must be in the mentor's career, e.g. "social media" matches
+    //    "Social Media Management" and "Social Media Marketing".
+    function words(text) {
+      return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    }
+
+    function careerMatches(mentorCareers) {
+      const picks = (prefs && prefs.careers) || [];
+      const typed = ((prefs && prefs.customCareers) || []).map(c => c.toLowerCase());
+      return mentorCareers.filter(mc => picks.some(pick => {
+        if (mc.toLowerCase() === pick.toLowerCase()) return true;
+        if (!typed.includes(pick.toLowerCase())) return false;
+        const mcWords = words(mc);
+        return words(pick).every(w => mcWords.includes(w));
+      }));
+    }
+
+    function matchInfo(m) {
+      if (!prefs) return { score: 0, careers: [], goals: [], hobbies: [], major: false, frequency: false, commitment: false };
+      const info = {
+        careers: careerMatches(m.careers),
+        goals: overlap(m.goals, prefs.goals),
+        hobbies: overlap(m.hobbies, prefs.hobbies),
+        major: m.major === prefs.major,
+        frequency: m.frequency === prefs.frequency,
+        commitment: m.commitment.toLowerCase() === (prefs.commitment || "").toLowerCase()
+      };
+      // careers count most, then goals and major/commitment, then the rest
+      info.score = info.careers.length * 3 + info.goals.length * 2 + info.hobbies.length
+        + (info.major ? 2 : 0) + (info.commitment ? 2 : 0) + (info.frequency ? 1 : 0);
+      info.common = info.careers.length + info.goals.length + info.hobbies.length
+        + info.major + info.frequency + info.commitment;
+      return info;
+    }
+
+    // Mentors to show: ONLY ones with a career you picked, best match first.
+    // (Major, goals, hobbies, etc. just change the order.)
+    // No filters filled out yet -> show everyone.
+    const notice = document.getElementById("notice");
+    let pool = MENTORS.map(m => ({ ...m, match: matchInfo(m) }));
+
+    if (!prefs) {
+      notice.innerHTML = 'Showing all mentors. <a href="coffee_filtered_page.html">Fill out your filters</a> to see your best matches first.';
+      notice.hidden = false;
+    } else {
+      pool = pool.filter(m => m.match.careers.length);
+      pool.sort((a, b) => b.match.score - a.match.score);
+    }
+
+    // ----- Icons -----
+    const AVATAR = '<svg class="avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><circle cx="12" cy="9.5" r="2.8"></circle><path d="M7 18.2c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4"></path></svg>';
+    const BUILDING = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1.5"></rect><line x1="9" y1="7" x2="9" y2="7.01"></line><line x1="15" y1="7" x2="15" y2="7.01"></line><line x1="9" y1="11" x2="9" y2="11.01"></line><line x1="15" y1="11" x2="15" y2="11.01"></line><path d="M10 21v-4h4v4"></path></svg>';
+    const X_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>';
+
+    // Safe text for building HTML
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    function tags(list, matched) {
+      const lower = matched.map(x => x.toLowerCase());
+      return list.map(t => `<span class="tag${lower.includes(t.toLowerCase()) ? " match" : ""}">${esc(t)}</span>`).join("");
+    }
+
+    // ----- Build one card -----
+    function cardHTML(m, isTop) {
+      const mi = m.match;
+      const badge = prefs ? `<span class="match-badge">${mi.common} of your pick${mi.common === 1 ? "" : "s"}</span>` : "";
+      return `
+        <article class="profile-card ${isTop ? "top" : "behind"}" data-id="${m.id}"
+          ${isTop ? `tabindex="0" aria-label="${esc(m.name)}, ${esc(m.role)}"` : 'aria-hidden="true"'}>
+          <span class="stamp yes">COFFEE CHAT</span>
+          <span class="stamp no">PASS</span>
+
+          <div class="card-head">
+            ${AVATAR}
+            <div>
+              <h2 class="card-name">${esc(m.name)}</h2>
+              <p class="card-role">${esc(m.role)} · ${esc(m.year)}</p>
+              <p class="card-company">${BUILDING}<span>${esc(m.company)} · ${m.years} year${m.years === 1 ? "" : "s"}</span></p>
+              ${badge}
+            </div>
+          </div>
+
+          <p class="card-bio">${esc(m.bio)}</p>
+
+          <div class="card-body">
+            <div class="card-section">
+              <h3>About</h3>
+              <div class="facts">
+                <span><strong>Major:</strong> ${esc(m.major)}${mi.major ? " &#10003;" : ""}</span>
+                <span><strong>Meets:</strong> ${esc(m.frequency)}${mi.frequency ? " &#10003;" : ""}</span>
+                <span><strong>Style:</strong> ${esc(m.commitment)}${mi.commitment ? " &#10003;" : ""}</span>
+              </div>
+            </div>
+            <div class="card-section">
+              <h3>Careers</h3>
+              <div class="tag-row">${tags(m.careers, mi.careers)}</div>
+            </div>
+            <div class="card-section">
+              <h3>Can help you</h3>
+              <div class="tag-row">${tags(m.goals, mi.goals)}</div>
+            </div>
+            <div class="card-section">
+              <h3>Hobbies</h3>
+              <div class="tag-row">${tags(m.hobbies, mi.hobbies)}</div>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    // ----- Draw the deck and the list -----
+    const deck = document.getElementById("deck");
+    const chatList = document.getElementById("chat-list");
+    const btnPass = document.getElementById("btn-pass");
+    const btnChat = document.getElementById("btn-chat");
+    const btnUndo = document.getElementById("btn-undo");
+
+    function remaining() {
+      return pool.filter(m => !decisions[m.id]);
+    }
+
+    function render() {
+      const left = remaining();
+      if (!pool.length) {
+        deck.innerHTML = `
+          <div class="deck-empty">
+            <h2>No mentors yet</h2>
+            <p>No mentors work in the careers you picked right now. Try adding more careers to see more mentors.</p>
+            <a href="coffee_filtered_page_2.html" class="pill-btn outline">Edit Filters</a>
+          </div>`;
+      } else if (left.length) {
+        // behind card first so the top card sits on top
+        deck.innerHTML = (left[1] ? cardHTML(left[1], false) : "") + cardHTML(left[0], true);
+        attachDrag(deck.querySelector(".profile-card.top"));
+      } else {
+        deck.innerHTML = `
+          <div class="deck-empty">
+            <h2>You've seen everyone!</h2>
+            <p>Check your coffee chat list, edit your filters, or start over to see the mentors again.</p>
+            <a href="coffee_filtered_page_2.html" class="pill-btn outline">Edit Filters</a>
+          </div>`;
+      }
+      btnPass.disabled = btnChat.disabled = !left.length;
+      btnUndo.disabled = !history.length;
+      renderList();
+    }
+
+    function renderList() {
+      const picked = MENTORS.filter(m => decisions[m.id] === "chat");
+      if (!picked.length) {
+        chatList.innerHTML = '<li class="chat-empty">No mentors yet. Swipe right on someone you\'d like to meet!</li>';
+        return;
+      }
+      chatList.innerHTML = picked.map(m => `
+        <li class="chat-item">
+          ${AVATAR}
+          <span class="chat-info">
+            <span class="chat-name">${esc(m.name)}</span>
+            <span class="chat-role">${esc(m.role)} at ${esc(m.company)}</span>
+          </span>
+          <button type="button" class="remove-btn" data-remove="${m.id}" aria-label="Remove ${esc(m.name)} from your list">${X_ICON}</button>
+        </li>`).join("");
+    }
+
+    // ----- Decide on the top card -----
+    let busy = false;
+
+    function decide(choice) {
+      const card = deck.querySelector(".profile-card.top");
+      if (!card || busy) return;
+      busy = true;
+      const dir = choice === "chat" ? 1 : -1;
+      card.classList.remove("dragging");
+      card.querySelector(choice === "chat" ? ".stamp.yes" : ".stamp.no").style.opacity = 1;
+      card.style.transform = `translate(${dir * (window.innerWidth + 200)}px, 40px) rotate(${dir * 25}deg)`;
+      card.style.opacity = "0";
+      setTimeout(() => {
+        decisions[card.dataset.id] = choice;
+        history.push(card.dataset.id);
+        store(DECISIONS_KEY, decisions);
+        busy = false;
+        render();
+        const next = deck.querySelector(".profile-card.top");
+        if (next && document.activeElement === document.body) next.focus({ preventScroll: true });
+      }, 300);
+    }
+
+    // ----- Drag / swipe with mouse or finger -----
+    const SWIPE_DISTANCE = 110; // px needed to count as a swipe
+
+    function attachDrag(card) {
+      let startX = 0, startY = 0, dx = 0, dragging = false;
+      const yes = card.querySelector(".stamp.yes");
+      const no = card.querySelector(".stamp.no");
+
+      card.addEventListener("pointerdown", e => {
+        if (busy || e.button > 0) return;
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        dx = 0;
+        card.setPointerCapture(e.pointerId);
+        card.classList.add("dragging");
+      });
+
+      card.addEventListener("pointermove", e => {
+        if (!dragging) return;
+        dx = e.clientX - startX;
+        const dy = (e.clientY - startY) * 0.2;
+        card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 18}deg)`;
+        yes.style.opacity = Math.max(0, Math.min(1, dx / SWIPE_DISTANCE));
+        no.style.opacity = Math.max(0, Math.min(1, -dx / SWIPE_DISTANCE));
+      });
+
+      const end = () => {
+        if (!dragging) return;
+        dragging = false;
+        if (dx > SWIPE_DISTANCE) return decide("chat");
+        if (dx < -SWIPE_DISTANCE) return decide("pass");
+        // not far enough: snap back
+        card.classList.remove("dragging");
+        card.style.transform = "";
+        yes.style.opacity = no.style.opacity = 0;
+      };
+
+      card.addEventListener("pointerup", end);
+      card.addEventListener("pointercancel", end);
+    }
+
+    // ----- Buttons and keys -----
+    btnChat.addEventListener("click", () => decide("chat"));
+    btnPass.addEventListener("click", () => decide("pass"));
+
+    btnUndo.addEventListener("click", () => {
+      if (busy || !history.length) return;
+      delete decisions[history.pop()];
+      store(DECISIONS_KEY, decisions);
+      render();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.target.closest("input, textarea, select")) return;
+      if (e.key === "ArrowRight") { e.preventDefault(); decide("chat"); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); decide("pass"); }
+    });
+
+    // Remove from list -> that mentor goes back into the deck
+    chatList.addEventListener("click", e => {
+      const btn = e.target.closest("[data-remove]");
+      if (!btn) return;
+      delete decisions[btn.dataset.remove];
+      history = history.filter(id => id !== btn.dataset.remove);
+      store(DECISIONS_KEY, decisions);
+      render();
+    });
+
+    document.getElementById("start-over").addEventListener("click", () => {
+      if (Object.keys(decisions).length && !confirm("Clear your coffee chat list and see every mentor again?")) return;
+      decisions = {};
+      history = [];
+      store(DECISIONS_KEY, decisions);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

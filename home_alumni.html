@@ -465,5 +465,10 @@
       </a>
     </nav>
   </div>
+  <script>
+    // Remember which side the user is on, so shared pages (like post.html)
+    // send Home back to the right home page.
+    try { localStorage.setItem("demma-role", "mentor"); } catch (e) {}
+  </script>
 </body>
 </html>
